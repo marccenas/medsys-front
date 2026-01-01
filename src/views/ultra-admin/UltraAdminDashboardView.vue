@@ -50,29 +50,95 @@
     </div>
     </div>
 
-    <div class="ua-panels">
-      <div class="panel">
-        <div class="panel-title">Recent Activities</div>
-        <div class="panel-body">
-          <ul class="list">
-            <li>Added new department: Cardiology</li>
-            <li>Created account for Nurse Unit Manager</li>
-            <li>Updated billing settings</li>
-          </ul>
-        </div>
-      </div>
+<div class="ua-panels">
+  <!-- Recent Activities -->
+  <div class="panel">
+    <div class="panel-title row-title">
+      <span>Recent Activities</span>
+      <button class="mini-btn" type="button" @click="window.alert('View all activities (UI only)')">
+        View all
+      </button>
+    </div>
 
-      <div class="panel">
-        <div class="panel-title">Task List</div>
-        <div class="panel-body">
-          <ul class="list">
-            <li>Review pending tasks (UI)</li>
-            <li>Approve staff accounts (UI)</li>
-            <li>Check department workload (UI)</li>
-          </ul>
+    <div class="panel-body">
+      <div class="list-wrap">
+        <div class="activity" v-for="a in activities" :key="a.id">
+          <div class="activity-ico" :class="a.color">
+            <font-awesome-icon :icon="a.icon" />
+          </div>
+
+          <div class="activity-main">
+            <div class="activity-line">
+              <span class="activity-title">{{ a.title }}</span>
+              <span class="tag" :class="a.tagClass">{{ a.tag }}</span>
+            </div>
+
+            <div class="activity-sub">
+              <span class="muted">{{ a.detail }}</span>
+            </div>
+          </div>
+
+          <div class="activity-meta">
+            <div class="time">{{ a.time }}</div>
+            <div class="muted small">{{ a.by }}</div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+    <!-- Task List -->
+        <div class="panel">
+            <div class="panel-title row-title">
+            <span>Task List</span>
+
+            <div class="task-actions">
+                <button class="mini-btn" type="button" @click="addDummyTask">
+                <font-awesome-icon icon="plus" /> Add
+                </button>
+                <button class="mini-btn ghost" type="button" @click="clearDone">
+                Clear done
+                </button>
+            </div>
+            </div>
+
+            <div class="panel-body">
+            <div class="list-wrap">
+                <label class="task" v-for="t in tasks" :key="t.id">
+                <input type="checkbox" v-model="t.done" />
+
+                <div class="task-main">
+                    <div class="task-top">
+                    <span class="task-title" :class="{ done: t.done }">{{ t.title }}</span>
+                    <span class="prio" :class="t.prioClass">{{ t.priority }}</span>
+                    </div>
+
+                    <div class="task-sub">
+                    <span class="muted">{{ t.detail }}</span>
+                    </div>
+                </div>
+
+                <div class="task-meta">
+                    <div class="due">
+                    <font-awesome-icon icon="calendar-check" />
+                    <span>{{ t.due }}</span>
+                    </div>
+                </div>
+                </label>
+            </div>
+
+            <div class="task-footer">
+                <div class="muted small">
+                {{ doneCount }} of {{ tasks.length }} completed
+                </div>
+                <div class="progress">
+                <div class="progress-bar" :style="{ width: progressPct + '%' }"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+
   </div>
 </template>
 
@@ -80,15 +146,287 @@
 import DoughnutChart from "../../components/charts/DoughnutChart.vue";
 import BarChart from "../../components/charts/BarChart.vue";
 
+import { computed, reactive } from "vue";
+
 const statusLabels = ["Admin", "Doctors", "Nurses", "Lab", "Tech"];
 const statusValues = [4, 6, 12, 5, 3];
 
 const staffLabels = ["Doctors", "Nurses", "Technicians"];
 const staffValues = [20, 35, 15];
+
+const activities = reactive([
+  {
+    id: 1,
+    icon: "building",
+    color: "bg-blue",
+    title: "New department added",
+    detail: "Cardiology added under Management & Physicians",
+    tag: "Department",
+    tagClass: "tag-blue",
+    time: "2 mins ago",
+    by: "by Ultra Admin",
+  },
+  {
+    id: 2,
+    icon: "user-gear",
+    color: "bg-green",
+    title: "Account created",
+    detail: "Nurse Unit Manager account created and role assigned",
+    tag: "Account",
+    tagClass: "tag-green",
+    time: "14 mins ago",
+    by: "by John Evans",
+  },
+  {
+    id: 3,
+    icon: "money-bill-wave",
+    color: "bg-orange",
+    title: "Billing settings updated",
+    detail: "Insurance provider mapping updated (UI only)",
+    tag: "Billing",
+    tagClass: "tag-orange",
+    time: "1 hour ago",
+    by: "by Finance Staff",
+  },
+  {
+    id: 4,
+    icon: "chart-column",
+    color: "bg-purple",
+    title: "Report exported",
+    detail: "Monthly utilization report exported (UI only)",
+    tag: "Reports",
+    tagClass: "tag-purple",
+    time: "Yesterday",
+    by: "by System",
+  },
+  {
+    id: 5,
+    icon: "shield-halved",
+    color: "bg-red",
+    title: "Permission change logged",
+    detail: "Role permission updated: Residents → limited access (UI only)",
+    tag: "Security",
+    tagClass: "tag-red",
+    time: "2 days ago",
+    by: "by Ultra Admin",
+  },
+]);
+
+const tasks = reactive([
+  {
+    id: 1,
+    title: "Review pending department tasks",
+    detail: "Emergency & Radiology have pending tasks that require approval.",
+    priority: "High",
+    prioClass: "prio-high",
+    due: "Today",
+    done: false,
+  },
+  {
+    id: 2,
+    title: "Approve new staff accounts",
+    detail: "3 new staff accounts awaiting verification (UI only).",
+    priority: "Medium",
+    prioClass: "prio-med",
+    due: "Tomorrow",
+    done: false,
+  },
+  {
+    id: 3,
+    title: "Verify appointment schedule sync",
+    detail: "Check department schedule conflicts for next week.",
+    priority: "Low",
+    prioClass: "prio-low",
+    due: "This week",
+    done: true,
+  },
+  {
+    id: 4,
+    title: "Audit role permissions",
+    detail: "Confirm Ultra Admin & Admin Management permissions are correct.",
+    priority: "Medium",
+    prioClass: "prio-med",
+    due: "This week",
+    done: false,
+  },
+  {
+    id: 5,
+    title: "Review billing exceptions",
+    detail: "Resolve billing exceptions for 5 patient records (UI only).",
+    priority: "High",
+    prioClass: "prio-high",
+    due: "Friday",
+    done: false,
+  },
+]);
+
+const doneCount = computed(() => tasks.filter(t => t.done).length);
+const progressPct = computed(() => (tasks.length ? (doneCount.value / tasks.length) * 100 : 0));
+
+function addDummyTask() {
+  tasks.unshift({
+    id: Date.now(),
+    title: "New task (UI only)",
+    detail: "This is a dummy task added on the frontend.",
+    priority: "Low",
+    prioClass: "prio-low",
+    due: "Next week",
+    done: false,
+  });
+}
+
+function clearDone() {
+  for (let i = tasks.length - 1; i >= 0; i--) {
+    if (tasks[i].done) tasks.splice(i, 1);
+  }
+}
+
 function alert(msg){ window.alert(msg); }
 </script>
 
 <style scoped>
+.row-title{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mini-btn{
+  border: 1px solid rgba(226,232,244,0.9);
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,249,255,0.8));
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 900;
+  cursor:pointer;
+  color: var(--text);
+}
+.mini-btn:hover{
+  box-shadow: 0 10px 18px rgba(34,50,74,0.10);
+}
+.mini-btn.ghost{
+  background: transparent;
+}
+
+.list-wrap{
+  display:grid;
+  gap: 10px;
+  max-height: 220px;
+  overflow:auto;
+  padding-right: 4px;
+}
+
+.activity{
+  display:grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 12px;
+  align-items:center;
+  border: 1px solid rgba(226,232,244,0.9);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(244,248,255,0.72));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.activity-ico{
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  color: white;
+  box-shadow: 0 12px 20px rgba(34,50,74,0.12);
+}
+.bg-blue{ background: linear-gradient(180deg, #2d76d6, #1e5fb7); }
+.bg-green{ background: linear-gradient(180deg, #22c55e, #16a34a); }
+.bg-orange{ background: linear-gradient(180deg, #f59e0b, #f97316); }
+.bg-purple{ background: linear-gradient(180deg, #8b5cf6, #6d28d9); }
+.bg-red{ background: linear-gradient(180deg, #ef4444, #dc2626); }
+
+.activity-line{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.activity-title{ font-weight: 900; }
+.activity-sub{ margin-top: 2px; }
+.activity-meta{ text-align:right; }
+.time{ font-weight: 900; font-size: 12px; }
+.small{ font-size: 12px; }
+
+.tag{
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(226,232,244,0.9);
+}
+.tag-blue{ background: rgba(45,118,214,0.12); color: #1e5fb7; }
+.tag-green{ background: rgba(34,197,94,0.12); color: #16a34a; }
+.tag-orange{ background: rgba(245,158,11,0.14); color: #c2410c; }
+.tag-purple{ background: rgba(139,92,246,0.14); color: #6d28d9; }
+.tag-red{ background: rgba(239,68,68,0.14); color: #b91c1c; }
+
+.task-actions{ display:flex; gap: 8px; align-items:center; }
+
+.task{
+  display:grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 10px;
+  align-items:center;
+  border: 1px solid rgba(226,232,244,0.9);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(244,248,255,0.72));
+}
+.task input{ transform: translateY(1px); }
+
+.task-top{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.task-title{ font-weight: 900; }
+.task-title.done{ text-decoration: line-through; opacity: 0.6; }
+
+.prio{
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(226,232,244,0.9);
+}
+.prio-high{ background: rgba(239,68,68,0.14); color: #b91c1c; }
+.prio-med{ background: rgba(245,158,11,0.14); color: #c2410c; }
+.prio-low{ background: rgba(34,197,94,0.12); color: #166534; }
+
+.task-meta .due{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  font-weight: 900;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.task-footer{
+  margin-top: 12px;
+  display:grid;
+  gap: 8px;
+}
+.progress{
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(226,232,244,0.9);
+  overflow:hidden;
+}
+.progress-bar{
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2d76d6, #22c55e);
+}
+
 .chart-box{
   height: 240px;
   border-radius: 12px;
