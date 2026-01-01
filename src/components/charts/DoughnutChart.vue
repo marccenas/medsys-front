@@ -30,8 +30,9 @@ const chartData = computed(() => ({
     {
       data: props.values,
       backgroundColor: props.labels.map((_, i) => palette[i % palette.length]),
-      borderColor: "#ffffff",
-      borderWidth: 2,
+      borderColor: "rgba(255,255,255,0.9)",
+      borderWidth: 3,
+      spacing: 2, 
       hoverOffset: 6,
     },
   ],
@@ -40,11 +41,22 @@ const chartData = computed(() => ({
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  cutout: "68%",
   plugins: {
-    legend: { position: "right" },
+    legend: {
+      position: "right",
+      labels: {
+        boxWidth: 10,
+        boxHeight: 10,
+        usePointStyle: true,
+        pointStyle: "rectRounded",
+        padding: 14,
+        color: "#6b7a90",
+        font: { weight: "700" },
+      },
+    },
     tooltip: { enabled: true },
   },
-  cutout: "70%",
 }));
 </script>
 

@@ -91,6 +91,14 @@ function alert(msg){ window.alert(msg); }
 <style scoped>
 .chart-box{
   height: 240px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(248,251,255,0.9), rgba(244,248,255,0.7));
+  border: 1px solid rgba(226,232,244,0.9);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 10px 18px rgba(34,50,74,0.08);
+  padding: 10px;
+}
+.chart-box{
+  height: 240px;
 }
 .ua-page{ display:grid; gap: 12px; }
 .ua-welcome{

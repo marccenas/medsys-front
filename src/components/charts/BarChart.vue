@@ -39,6 +39,7 @@ const chartData = computed(() => ({
       backgroundColor: props.labels.map((_, i) => barColors[i % barColors.length]),
       borderRadius: 10,
       borderSkipped: false,
+      barThickness: 28, // ✅ similar thickness to sample
     },
   ],
 }));
@@ -53,12 +54,12 @@ const chartOptions = computed(() => ({
   scales: {
     y: {
       beginAtZero: true,
-      grid: { color: "rgba(34,50,74,0.10)" },
-      ticks: { color: "#6b7a90" },
+      grid: { color: "rgba(34,50,74,0.08)" }, // softer
+      ticks: { color: "#6b7a90", font: { weight: "700" } },
     },
     x: {
       grid: { display: false },
-      ticks: { color: "#6b7a90" },
+      ticks: { color: "#6b7a90", font: { weight: "700" } },
     },
   },
 }));
