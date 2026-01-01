@@ -1,6 +1,84 @@
-import './assets/main.css'
+import { createApp } from "vue";
+import App from "./App.vue";
+import router from "./router";
+import "./styles/base.css";
 
-import { createApp } from 'vue'
-import App from './App.vue'
+/* =========================
+   Font Awesome Setup
+========================= */
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-createApp(App).mount('#app')
+/* SOLID ICONS */
+import {
+  faEnvelope,
+  faLock,
+  faShieldHalved,
+  faUserDoctor,
+  faUserGraduate,
+  faUserNurse,
+  faUserShield,
+  faStethoscope,
+  faUsers,
+  faGraduationCap,
+  faPills,
+  faPersonWalking,
+  faCommentMedical,
+  faXRay,
+  faBuilding,
+  faUsersGear,
+  faMoneyBillWave,
+  faShield,
+  faRightFromBracket,
+  faGauge,
+  faBell,
+  faPlus,
+  faMagnifyingGlass,
+  faHospitalUser,
+  faCalendarCheck,
+  faChartColumn,
+  faUserGear,
+  faGear,
+  faKey
+} from "@fortawesome/free-solid-svg-icons";
+
+library.add(
+  faEnvelope,
+  faLock,
+  faShieldHalved,
+  faUserDoctor,
+  faUserGraduate,
+  faUserNurse,
+  faUserShield,
+  faStethoscope,
+  faUsers,
+  faGraduationCap,
+  faPills,
+  faPersonWalking,
+  faCommentMedical,
+  faXRay,
+  faBuilding,
+  faUsersGear,
+  faMoneyBillWave,
+  faShield,
+  faRightFromBracket,
+  faGauge,
+  faBell,
+  faPlus,
+  faMagnifyingGlass,
+  faHospitalUser,
+  faCalendarCheck,
+  faChartColumn,
+  faUserGear,
+  faGear,
+  faKey
+);
+
+/* =========================
+   App Init
+========================= */
+const app = createApp(App);
+
+app.component("font-awesome-icon", FontAwesomeIcon);
+app.use(router);
+app.mount("#app");

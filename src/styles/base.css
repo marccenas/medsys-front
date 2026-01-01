@@ -1,0 +1,124 @@
+:root{
+  --bg: #eef3fb;
+  --card: #ffffff;
+  --text: #22324a;
+  --muted: #6b7a90;
+  --line: #e2e8f4;
+  --blue: #2d76d6;
+  --blue2: #1e5fb7;
+  --shadow: 0 18px 40px rgba(34, 50, 74, 0.12);
+  --radius: 14px;
+}
+
+*{ box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 30% 30%, #f7faff, var(--bg));
+}
+
+a{ color: var(--blue); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+.container-center{
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+}
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.h1{
+  font-size: 26px;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.subtle{ color: var(--muted); }
+
+.input{
+  width: 100%;
+  padding: 12px 14px 12px 44px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  outline: none;
+  font-size: 14px;
+  background: #fbfdff;
+}
+.input:focus{
+  border-color: rgba(45, 118, 214, 0.45);
+  box-shadow: 0 0 0 4px rgba(45, 118, 214, 0.10);
+}
+
+.field{
+  position: relative;
+  margin-top: 12px;
+}
+.icon{
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7c8ea8;
+  font-size: 16px;
+}
+
+.btn{
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--blue), var(--blue2));
+  box-shadow: 0 12px 25px rgba(45, 118, 214, 0.25);
+}
+.btn:active{ transform: translateY(1px); }
+
+.checkbox-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.header{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo-mark{
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2d76d6, #1e5fb7);
+  position: relative;
+}
+.logo-mark::before, .logo-mark::after{
+  content:"";
+  position:absolute;
+  background:#fff;
+  opacity:0.9;
+  border-radius:2px;
+}
+.logo-mark::before{ width:14px;height:4px; left:6px; top:11px; }
+.logo-mark::after{ width:4px;height:14px; left:11px; top:6px; }
+
+.page{
+  max-width: 1100px;
+  width: 100%;
+}
