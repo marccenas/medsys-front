@@ -9,7 +9,6 @@ import "./styles/base.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-/* SOLID ICONS */
 import {
   faEnvelope,
   faLock,
@@ -33,7 +32,7 @@ import {
   faGauge,
   faBell,
   faPlus,
-  faMagnifyingGlass,
+  faMagnifyingGlass, // ✅ KEEP ONLY ONCE
   faHospitalUser,
   faCalendarCheck,
   faChartColumn,
@@ -73,6 +72,7 @@ library.add(
   faGear,
   faKey
 );
+
 
 /* =========================
    App Init

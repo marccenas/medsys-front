@@ -5,9 +5,6 @@
         <div class="ua-subtle">Dashboard</div>
         <div class="ua-h1">Welcome, Admin</div>
       </div>
-      <button class="btn" style="width:auto; padding:10px 14px; font-size:14px;" @click="window.alert('Add Department (UI only)')">
-        <font-awesome-icon icon="plus" /> New Department
-      </button>
     </div>
 
     <div class="ua-kpis">
@@ -87,58 +84,90 @@
     </div>
   </div>
 
-    <!-- Task List -->
-        <div class="panel">
-            <div class="panel-title row-title">
-            <span>Task List</span>
+<!-- Task List -->
+<div class="panel">
+  <div class="panel-title row-title">
+    <span>Task List</span>
 
-            <div class="task-actions">
-                <button class="mini-btn" type="button" @click="addDummyTask">
-                <font-awesome-icon icon="plus" /> Add
-                </button>
-                <button class="mini-btn ghost" type="button" @click="clearDone">
-                Clear done
-                </button>
+    <div class="task-actions">
+      <button class="mini-btn" type="button" @click="addDummyTask">
+        <font-awesome-icon icon="plus" /> Add
+      </button>
+      <button class="mini-btn ghost" type="button" @click="clearDone">
+        Clear done
+      </button>
+    </div>
+  </div>
+
+    <div class="panel-body">
+    <!-- Controls -->
+        <div class="task-controls">
+        <div class="task-search">
+            <font-awesome-icon icon="magnifying-glass" />
+            <input v-model.trim="taskQuery" placeholder="Search tasks..." />
+        </div>
+
+      <div class="task-dd">
+        <label class="muted small">Filter</label>
+        <select v-model="taskFilter" class="select">
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+
+      <div class="task-dd">
+        <label class="muted small">Priority</label>
+        <select v-model="prioritySort" class="select">
+          <option value="none">None</option>
+          <option value="high">High → Low</option>
+          <option value="low">Low → High</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- List -->
+        <div class="list-wrap">
+        <label class="task" v-for="t in visibleTasks" :key="t.id">
+            <input type="checkbox" v-model="t.done" />
+
+            <div class="task-main">
+            <div class="task-top">
+                <span class="task-title" :class="{ done: t.done }">{{ t.title }}</span>
+                <span class="prio" :class="t.prioClass">{{ t.priority }}</span>
+            </div>
+
+            <div class="task-sub">
+                <span class="muted">{{ t.detail }}</span>
             </div>
             </div>
 
-            <div class="panel-body">
-            <div class="list-wrap">
-                <label class="task" v-for="t in tasks" :key="t.id">
-                <input type="checkbox" v-model="t.done" />
-
-                <div class="task-main">
-                    <div class="task-top">
-                    <span class="task-title" :class="{ done: t.done }">{{ t.title }}</span>
-                    <span class="prio" :class="t.prioClass">{{ t.priority }}</span>
-                    </div>
-
-                    <div class="task-sub">
-                    <span class="muted">{{ t.detail }}</span>
-                    </div>
-                </div>
-
-                <div class="task-meta">
-                    <div class="due">
-                    <font-awesome-icon icon="calendar-check" />
-                    <span>{{ t.due }}</span>
-                    </div>
-                </div>
-                </label>
-            </div>
-
-            <div class="task-footer">
-                <div class="muted small">
-                {{ doneCount }} of {{ tasks.length }} completed
-                </div>
-                <div class="progress">
-                <div class="progress-bar" :style="{ width: progressPct + '%' }"></div>
-                </div>
+            <div class="task-meta">
+            <div class="due">
+                <font-awesome-icon icon="calendar-check" />
+                <span>{{ t.due }}</span>
             </div>
             </div>
+        </label>
+
+        <div v-if="visibleTasks.length === 0" class="empty">
+            No tasks found.
         </div>
         </div>
 
+        <!-- Footer -->
+        <div class="task-footer">
+        <div class="muted small">
+            {{ doneCount }} of {{ tasks.length }} completed
+        </div>
+        <div class="progress">
+            <div class="progress-bar" :style="{ width: progressPct + '%' }"></div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    </div>
   </div>
 </template>
 
@@ -146,13 +175,17 @@
 import DoughnutChart from "../../components/charts/DoughnutChart.vue";
 import BarChart from "../../components/charts/BarChart.vue";
 
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 
 const statusLabels = ["Admin", "Doctors", "Nurses", "Lab", "Tech"];
 const statusValues = [4, 6, 12, 5, 3];
 
 const staffLabels = ["Doctors", "Nurses", "Technicians"];
 const staffValues = [20, 35, 15];
+
+const taskFilter = ref("all");
+const taskQuery = ref("");
+const prioritySort = ref("none");
 
 const activities = reactive([
   {
@@ -280,11 +313,103 @@ function clearDone() {
     if (tasks[i].done) tasks.splice(i, 1);
   }
 }
+function prioWeight(p) {
+  if (p === "High") return 3;
+  if (p === "Medium") return 2;
+  return 1; // Low
+}
+
+// Filter + search + sort result
+const visibleTasks = computed(() => {
+  const q = taskQuery.value.trim().toLowerCase();
+
+  let arr = tasks.filter((t) => {
+    // filter (status)
+    if (taskFilter.value === "pending" && t.done) return false;
+    if (taskFilter.value === "done" && !t.done) return false;
+
+    // search
+    if (!q) return true;
+    return (
+      t.title.toLowerCase().includes(q) ||
+      t.detail.toLowerCase().includes(q) ||
+      t.priority.toLowerCase().includes(q) ||
+      t.due.toLowerCase().includes(q)
+    );
+  });
+
+  // sort by priority if requested
+  if (prioritySort.value !== "none") {
+    arr = [...arr].sort((a, b) => {
+      const wa = prioWeight(a.priority);
+      const wb = prioWeight(b.priority);
+      return prioritySort.value === "high" ? wb - wa : wa - wb;
+    });
+  }
+
+  return arr;
+});
 
 function alert(msg){ window.alert(msg); }
 </script>
 
 <style scoped>
+.task-controls{
+  display:grid;
+  grid-template-columns: 1fr 160px 180px;
+  gap: 10px;
+  align-items:end;
+  margin-bottom: 10px;
+}
+
+.task-search{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  border: 1px solid rgba(226,232,244,0.9);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(244,248,255,0.72));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.task-search input{
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+.task-dd{
+  display:grid;
+  gap: 6px;
+}
+
+.select{
+  width: 100%;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(226,232,244,0.9);
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,249,255,0.8));
+  font-weight: 800;
+  outline: none;
+}
+
+.empty{
+  text-align:center;
+  color: var(--muted);
+  font-weight: 800;
+  padding: 18px 10px;
+  border: 1px dashed rgba(226,232,244,0.9);
+  border-radius: 12px;
+  background: rgba(248,251,255,0.7);
+}
+
+@media (max-width: 980px){
+  .task-controls{
+    grid-template-columns: 1fr;
+  }
+}
+
 .row-title{
   display:flex;
   align-items:center;
@@ -309,11 +434,13 @@ function alert(msg){ window.alert(msg); }
 }
 
 .list-wrap{
-  display:grid;
+  display: grid;
   gap: 10px;
-  max-height: 220px;
-  overflow:auto;
-  padding-right: 4px;
+  overflow-y: auto;
+  padding-right: 6px;
+
+  flex: 1;
+  min-height: 0;
 }
 
 .activity{
@@ -489,13 +616,30 @@ function alert(msg){ window.alert(msg); }
   border-radius: 14px;
   background: #fff;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
 }
 .panel-title{
   padding: 12px 14px;
   font-weight: 900;
   border-bottom: 1px solid var(--line);
 }
-.panel-body{ padding: 14px; }
+.panel-body{ 
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+}
+.list-wrap::-webkit-scrollbar{
+  width: 8px;
+}
+.list-wrap::-webkit-scrollbar-thumb{
+  background: rgba(34,50,74,0.25);
+  border-radius: 999px;
+}
+.list-wrap::-webkit-scrollbar-track{
+  background: transparent;
+}
 .chart-placeholder{
   height: 160px;
   border: 1px dashed var(--line);
