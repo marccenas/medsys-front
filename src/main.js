@@ -32,13 +32,15 @@ import {
   faGauge,
   faBell,
   faPlus,
-  faMagnifyingGlass, // ✅ KEEP ONLY ONCE
+  faMagnifyingGlass,
   faHospitalUser,
   faCalendarCheck,
   faChartColumn,
   faUserGear,
   faGear,
-  faKey
+  faKey,
+  faCheck,
+  faDownload
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -70,7 +72,9 @@ library.add(
   faChartColumn,
   faUserGear,
   faGear,
-  faKey
+  faKey,
+  faCheck,
+  faDownload
 );
 
 

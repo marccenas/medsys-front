@@ -6,6 +6,7 @@ import UltraAdminLayout from "../layouts/UltraAdminLayout.vue";
 import UltraAdminDashboardView from "../views/ultra-admin/UltraAdminDashboardView.vue";
 import UltraAdminDepartmentsView from "../views/ultra-admin/UltraAdminDepartmentsView.vue";
 import UltraAdminAdminManagementView from "../views/ultra-admin/UltraAdminAdminManagementView.vue";
+import UltraAdminStaffView from "../views/ultra-admin/UltraAdminStaffView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,9 +20,10 @@ const router = createRouter({
       component: UltraAdminLayout,
       children: [
         { path: "", redirect: "/dashboard/ultra-admin/dashboard" },
-        { path: "dashboard", component: UltraAdminDashboardView },
-        { path: "departments", component: UltraAdminDepartmentsView },
-        { path: "admin-management", component: UltraAdminAdminManagementView },
+        { path: "dashboard", name: "ua-dashboard", component: UltraAdminDashboardView },
+        { path: "departments", name: "ua-departments", component: UltraAdminDepartmentsView },
+        { path: "staff", name: "ua-staff", component: UltraAdminStaffView },
+        { path: "admin-management", name: "ua-admin-management", component: UltraAdminAdminManagementView },
       ],
     },
   ],
