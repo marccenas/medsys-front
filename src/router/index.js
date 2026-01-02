@@ -8,6 +8,8 @@ import UltraAdminDepartmentsView from "../views/ultra-admin/UltraAdminDepartment
 import UltraAdminAdminManagementView from "../views/ultra-admin/UltraAdminAdminManagementView.vue";
 import UltraAdminStaffView from "../views/ultra-admin/UltraAdminStaffView.vue";
 import Patients from "../views/ultra-admin/Patients.vue";
+import AppointmentsView from "../views/ultra-admin/AppointmentsPage.vue";
+import BillingView from "../views/ultra-admin/BillingPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +27,8 @@ const router = createRouter({
         { path: "departments", name: "ua-departments", component: UltraAdminDepartmentsView },
         { path: "staff", name: "ua-staff", component: UltraAdminStaffView },
         { path: "patients", name: "ua-patients", component: Patients },
+        { path: "appointments", name: "ua-appointments", component: AppointmentsView },
+        { path: "billing", name: "ua-billing", component: BillingView },
         { path: "admin-management", name: "ua-admin-management", component: UltraAdminAdminManagementView },
       ],
     },

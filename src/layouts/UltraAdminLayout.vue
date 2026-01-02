@@ -27,11 +27,11 @@
           <font-awesome-icon icon="hospital-user" /> <span>Patients</span>
         </button>
 
-        <button class="ua-link" @click="notReady('Appointments')">
+        <button class="ua-link" :class="{ active: isActive('appointments') }" @click="go('appointments')">
           <font-awesome-icon icon="calendar-check" /> <span>Appointments</span>
         </button>
 
-        <button class="ua-link" @click="notReady('Billing')">
+        <button class="ua-link" :class="{ active: isActive('billing') }" @click="go('billing')">
           <font-awesome-icon icon="money-bill-wave" /> <span>Billing</span>
         </button>
 
@@ -53,7 +53,6 @@
     <main class="ua-main">
       <header class="ua-topbar">
         <div class="ua-title">
-          <!-- ✅ hamburger only visible on tablet/mobile -->
           <button class="ua-burger" type="button" @click="navOpen = !navOpen" aria-label="Toggle navigation">
             <font-awesome-icon icon="bars" />
           </button>
@@ -61,7 +60,6 @@
           <h1>{{ pageTitle }}</h1>
         </div>
 
-        <!-- ✅ IMPORTANT: actions wrapper (was missing/mismatched before) -->
         <div class="ua-actions">
           <!-- Notifications -->
           <div class="ua-notif" ref="notifRef" @click.stop>
@@ -202,6 +200,8 @@ const pageTitle = computed(() => {
   if (p.includes("/departments")) return "Departments Overview";
   if (p.includes("/staff")) return "Staff";
   if (p.includes("/patients")) return "patients";
+  if (p.includes("/appointments")) return "appointments";
+  if (p.includes("/billing")) return "billing";
   if (p.includes("/admin-management")) return "Admin Management";
   return "Dashboard";
 });
