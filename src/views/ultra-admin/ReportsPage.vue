@@ -576,14 +576,20 @@ function clampPct(n) {
   gap:12px;
 }
 .card-icon{
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border: 1px solid rgba(45, 78, 140, .12);
+  /* border: 1px solid rgba(45, 78, 140, .12); */
   background: #f4f7ff;
+}
+.card-icon{
+  box-shadow: 0 10px 18px rgba(17, 36, 80, 0.06);
+}
+.card-icon :deep(svg){
+width: 28px; height: 28px;
 }
 .card-title .h{
   font-weight: 800;

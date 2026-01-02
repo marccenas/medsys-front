@@ -43,7 +43,7 @@
           <font-awesome-icon icon="user-gear" /> <span>Admin Management</span>
         </button>
 
-        <button class="ua-link" @click="notReady('Settings')">
+        <button class="ua-link" :class="{ active: isActive('settings') }" @click="go('settings')">
           <font-awesome-icon icon="gear" /> <span>Settings</span>
         </button>
       </nav>
@@ -203,6 +203,7 @@ const pageTitle = computed(() => {
   if (p.includes("/appointments")) return "appointments";
   if (p.includes("/billing")) return "billing";
   if (p.includes("/reports")) return "reports";
+  if (p.includes("/settings")) return "settings";
   if (p.includes("/admin-management")) return "Admin Management";
   return "Dashboard";
 });
