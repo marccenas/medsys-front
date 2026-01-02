@@ -35,7 +35,7 @@
           <font-awesome-icon icon="money-bill-wave" /> <span>Billing</span>
         </button>
 
-        <button class="ua-link" @click="notReady('Reports')">
+        <button class="ua-link" :class="{ active: isActive('reports') }" @click="go('reports')">
           <font-awesome-icon icon="chart-column" /> <span>Reports</span>
         </button>
 
@@ -202,6 +202,7 @@ const pageTitle = computed(() => {
   if (p.includes("/patients")) return "patients";
   if (p.includes("/appointments")) return "appointments";
   if (p.includes("/billing")) return "billing";
+  if (p.includes("/reports")) return "reports";
   if (p.includes("/admin-management")) return "Admin Management";
   return "Dashboard";
 });

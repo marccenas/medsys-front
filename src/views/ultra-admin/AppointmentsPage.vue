@@ -148,7 +148,7 @@
 
       <div class="right-controls">
         <div class="dropdown" ref="bulkRef">
-          <button class="mini-btn" type="button" :disabled="selectedIds.size === 0" @click="toggleDropdown('bulk')">
+          <button class="mini-btn" type="button" @click="toggleDropdown('bulk')">
             <span>Bulk Actions</span>
             <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
           </button>
