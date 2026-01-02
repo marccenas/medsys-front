@@ -124,7 +124,7 @@
           type="checkbox"
           :checked="isAllOnPageSelected"
           :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
-          @change="toggleSelectAllOnPage($event.target.checked)"
+          @change="toggleAllOnPage($event.target.checked)"
         />
 
         <div class="dropdown" ref="tableExportRef">
@@ -169,7 +169,16 @@
       <table class="appointments-table">
         <thead>
           <tr>
-            <th class="w-check"></th>
+            <!-- ✅ MUST be a TH, not floating inside TR -->
+            <th class="w-check">
+              <input
+                class="chk"
+                type="checkbox"
+                :checked="isAllOnPageSelected"
+                :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
+                @change="toggleAllOnPage($event.target.checked)"
+              />
+            </th>
 
             <th>
               <div class="th-sort">
@@ -225,7 +234,12 @@
         <tbody>
           <tr v-for="a in pagedAppointments" :key="a.id">
             <td class="w-check">
-              <input class="chk" type="checkbox" :checked="selectedIds.has(a.id)" @change="toggleRow(a.id, $event.target.checked)" />
+              <input
+                class="chk"
+                type="checkbox"
+                :checked="selectedIds.has(a.id)"
+                @change="toggleRow(a.id, $event.target.checked)"
+              />
             </td>
 
             <td>
@@ -383,13 +397,20 @@ const pagedAppointments = computed(() => {
   return filtered.value.slice(start, start + pageSize.value);
 });
 
-const isAllOnPageSelected = computed(() => pagedAppointments.value.length && pagedAppointments.value.every((a) => selectedIds.value.has(a.id)));
-const isSomeOnPageSelected = computed(() => pagedAppointments.value.some((a) => selectedIds.value.has(a.id)));
+/* ✅ FIX: safe booleans */
+const isAllOnPageSelected = computed(() => {
+  if (!pagedAppointments.value.length) return false;
+  return pagedAppointments.value.every((a) => selectedIds.value.has(a.id));
+});
+const isSomeOnPageSelected = computed(() => {
+  return pagedAppointments.value.some((a) => selectedIds.value.has(a.id));
+});
 
 watch(
   [() => filters.search, () => filters.dept, () => filters.provider, () => filters.status, pageSize],
   () => {
     page.value = 1;
+    selectedIds.value = new Set(); /* ✅ reset selection on filter change */
     closeAll();
   }
 );
@@ -449,13 +470,13 @@ function setDept(v) { filters.dept = v; closeAll(); }
 function setProvider(v) { filters.provider = v; closeAll(); }
 function setStatus(v) { filters.status = v; closeAll(); }
 
-/* selection */
+/* ✅ selection */
 function toggleRow(id, checked) {
   const next = new Set(selectedIds.value);
   checked ? next.add(id) : next.delete(id);
   selectedIds.value = next;
 }
-function toggleSelectAllOnPage(checked) {
+function toggleAllOnPage(checked) {
   const next = new Set(selectedIds.value);
   for (const a of pagedAppointments.value) checked ? next.add(a.id) : next.delete(a.id);
   selectedIds.value = next;
@@ -480,7 +501,9 @@ function bulkRemove() {
 }
 function removeOne(a) {
   appointments.value = appointments.value.filter((x) => x.id !== a.id);
-  selectedIds.value.delete(a.id);
+  const next = new Set(selectedIds.value);
+  next.delete(a.id);
+  selectedIds.value = next;
   closeAll();
 }
 
@@ -524,12 +547,12 @@ function exportCSV(mode) {
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `appointments_${mode}_${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `appointments_${mode}_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
   URL.revokeObjectURL(url);
   closeAll();
 }
@@ -761,6 +784,19 @@ function exportCSV(mode) {
   border-collapse:separate;
   border-spacing:0;
 }
+.appointments-table th.w-check,
+.appointments-table td.w-check{
+  padding-left: 14px;
+  padding-right: 14px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.appointments-table th.w-check .chk{
+  display: inline-block;
+  margin: 0;            /* prevents it drifting */
+  transform: translateY(1px);
+}
 .appointments-table thead th{
   background:#f3f6ff;
   font-size:13px;
@@ -800,7 +836,7 @@ function exportCSV(mode) {
   object-fit:cover;
   background:#fff;
 }
-.name{ font-weight:800; color:#1f2a44; }
+.name{ font-weight:600; color:#1f2a44; }
 
 .aid{
   color:#2f86ff;
