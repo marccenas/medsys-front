@@ -129,7 +129,7 @@
           type="checkbox"
           :checked="isAllOnPageSelected"
           :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
-          @change="toggleSelectAllOnPage($event.target.checked)"
+          @change="toggleAllOnPage($event.target.checked)"
         />
 
         <div class="dropdown" ref="tableExportRef">
@@ -174,7 +174,16 @@
       <table class="billing-table">
         <thead>
           <tr>
-            <th class="w-check"></th>
+            <th class="w-check">
+              <input
+                class="chk"
+                type="checkbox"
+                :checked="isAllOnPageSelected"
+                :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
+                @change="toggleAllOnPage($event.target.checked)"
+              />
+            </th>
+
             <th>
               <div class="th-sort">
                 <span>Name</span>
@@ -498,9 +507,11 @@ watch(
   [() => filters.search, () => filters.dept, () => filters.status, () => filters.payer, pageSize],
   () => {
     page.value = 1;
+    selectedIds.value = new Set(); // reset selection on filter/page-size changes
     closeAll();
   }
 );
+
 
 /* selection */
 const isAllOnPageSelected = computed(() => paged.value.length && paged.value.every((r) => selectedIds.value.has(r.id)));
@@ -511,11 +522,14 @@ function toggleRow(id, checked) {
   checked ? next.add(id) : next.delete(id);
   selectedIds.value = next;
 }
-function toggleSelectAllOnPage(checked) {
+function toggleAllOnPage(checked) {
   const next = new Set(selectedIds.value);
-  for (const r of paged.value) checked ? next.add(r.id) : next.delete(r.id);
+  for (const r of paged.value) {
+    checked ? next.add(r.id) : next.delete(r.id);
+  }
   selectedIds.value = next;
 }
+
 
 /* dropdown helpers */
 function toggleDropdown(name) {
