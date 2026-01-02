@@ -165,8 +165,17 @@
       <table class="staff-table">
         <thead>
           <tr>
-            <th class="w-check"></th>
+            <th class="w-check th-check">
+              <input
+                class="chk"
+                type="checkbox"
+                :checked="isAllOnPageSelected"
+                :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
+                @change="toggleAllOnPage($event.target.checked)"
+              />
+            </th>
 
+            <!-- Name (no checkbox inside) -->
             <th>
               <div class="th-sort">
                 <span>Name</span>
@@ -776,7 +785,7 @@ function goTo(p) {
   box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
 }
 
-/* stats row (same pattern) */
+/* stats row */
 .stats{
   display:flex;
   align-items:center;
@@ -832,23 +841,8 @@ function goTo(p) {
   height:18px;
   accent-color:#2f86ff;
 }
-.mini-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:8px;
-  border:1px solid rgba(45, 78, 140, .14);
-  background:#f6f8ff;
-  font-weight:700;
-  color:#33415c;
-  cursor:pointer;
-  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
-}
-.mini-btn:disabled{ opacity:.55; cursor:not-allowed; }
-.mini-btn-compact{ padding:10px 12px; }
 
-/* dropdown menu (same as Patients) */
+/* dropdown menu */
 .dropdown{ position:relative; }
 .menu{
   position:absolute;
@@ -896,6 +890,17 @@ function goTo(p) {
   border-collapse:separate;
   border-spacing:0;
 }
+.staff-table thead th.th-check{
+  width: 46px;                /* matches .w-check */
+  padding: 14px 14px;         /* matches your thead padding */
+  text-align: left;
+  vertical-align: middle;
+}
+.staff-table thead th.th-check .chk{
+  display: inline-block;
+  margin: 0;
+  transform: translateY(1px);
+}
 .staff-table thead th{
   background:#f3f6ff;
   font-size:13px;
@@ -903,6 +908,8 @@ function goTo(p) {
   font-weight:800;
   padding:14px 14px;
   border-bottom:1px solid rgba(45, 78, 140, .14);
+  text-align:left;
+  position:relative;
 }
 .staff-table tbody td{
   padding:12px 14px;
@@ -922,6 +929,38 @@ function goTo(p) {
 }
 .th-caret{ opacity:.6; font-size:12px; }
 
+.th-name-cell{
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  column-gap: 10px;
+}
+.th-name-cell .th-chk-far{
+  position: static;
+  transform: none;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  accent-color:#2f86ff;
+}
+.th-name-cell .th-sort{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  min-width:0;
+}
+.th-chk-far{
+  position:absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  accent-color:#2f86ff;
+}
+
+/* staff name cell */
 .name-cell{
   display:flex;
   align-items:center;
@@ -936,7 +975,7 @@ function goTo(p) {
   background:#fff;
 }
 .name-meta{ min-width:0; }
-.nm{ font-weight:800; color:#1f2a44; line-height:1.1; }
+.nm{ font-weight:600; color:#1f2a44; line-height:1.1; }
 .sub{ margin-top:2px; font-size:12px; opacity:.75; font-weight:700; }
 
 .muted{ opacity:.8; }
@@ -950,7 +989,7 @@ function goTo(p) {
 }
 .email:hover{ text-decoration:underline; }
 
-/* status badge (staff version matching Patients badge feel) */
+/* status badge */
 .badge{
   display:inline-flex;
   align-items:center;
@@ -972,7 +1011,7 @@ function goTo(p) {
   color:#b56a14;
 }
 
-/* view button (same as Patients) */
+/* view button */
 .view-btn{
   display:inline-flex;
   align-items:center;
@@ -988,6 +1027,25 @@ function goTo(p) {
   cursor:pointer;
   box-shadow: 0 10px 22px rgba(47, 134, 255, 0.28);
 }
+.staff-table thead th.th-name-cell{
+  padding: 14px 14px;
+}
+
+.mini-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:8px;
+  border:1px solid rgba(45, 78, 140, .14);
+  background:#f6f8ff;
+  font-weight:700;
+  color:#33415c;
+  cursor:pointer;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
+}
+.mini-btn:disabled{ opacity:.55; cursor:not-allowed; }
+.mini-btn-compact{ padding:10px 12px; }
 
 .empty{
   text-align:center;
@@ -996,7 +1054,7 @@ function goTo(p) {
   font-weight:800;
 }
 
-/* footer pagination (Patients style) */
+/* footer pagination */
 .table-footer{
   display:flex;
   align-items:center;
@@ -1043,7 +1101,7 @@ function goTo(p) {
   background:transparent;
 }
 
-/* modal aligned with Patients look */
+/* modal */
 .modal{
   position: fixed;
   inset: 0;

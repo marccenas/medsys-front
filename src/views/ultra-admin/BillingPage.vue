@@ -153,7 +153,7 @@
 
       <div class="right-controls">
         <div class="dropdown" ref="bulkRef">
-          <button class="mini-btn" type="button" :disabled="selectedIds.size === 0" @click="toggleDropdown('bulk')">
+          <button class="mini-btn" type="button" @click="toggleDropdown('bulk')">
             <span>Bulk Actions</span>
             <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
           </button>
@@ -175,7 +175,6 @@
         <thead>
           <tr>
             <th class="w-check"></th>
-
             <th>
               <div class="th-sort">
                 <span>Name</span>
@@ -948,7 +947,7 @@ function noop(){}
   object-fit:cover;
   background:#fff;
 }
-.name{ font-weight:800; color:#1f2a44; }
+.name{ font-weight:600; color:#1f2a44; }
 
 .iid{
   color:#2f86ff;

@@ -89,7 +89,7 @@
     <!-- Stat Cards (kept as-is, no extra icon styling needed) -->
     <div class="stats">
       <div class="stats-label">
-        <span>Total Patients:</span>
+        <span>Total Patients: </span>
         <strong>{{ totalPatients.toLocaleString() }}</strong>
       </div>
 
@@ -161,37 +161,50 @@
       <table class="patients-table">
         <thead>
           <tr>
-            <th class="w-check"></th>
+            <th class="w-check th-check">
+              <input
+                class="chk"
+                type="checkbox"
+                :checked="isAllOnPageSelected"
+                :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
+                @change="toggleAllOnPage($event.target.checked)"
+              />
+            </th>
             <th>
               <div class="th-sort">
                 <span>Name</span>
                 <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
               </div>
             </th>
+
             <th>
               <div class="th-sort">
                 <span>Patient ID</span>
                 <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
               </div>
             </th>
+
             <th>
               <div class="th-sort">
                 <span>Admission Date</span>
                 <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
               </div>
             </th>
+
             <th>
               <div class="th-sort">
                 <span>Status</span>
                 <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
               </div>
             </th>
+
             <th>
               <div class="th-sort">
                 <span>Insurance</span>
                 <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
               </div>
             </th>
+
             <th class="w-actions">
               <div class="th-sort">
                 <span>Bulk Actions</span>
@@ -300,8 +313,11 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 
-const openDropdown = ref(null);
-const openRowDropdown = ref(null);
+/* =========================
+   Dropdown state + refs
+========================= */
+const openDropdown = ref(null);     // 'topExport'|'tableExport'|'dept'|'status'|'ins'|'bulk'|null
+const openRowDropdown = ref(null);  // patient id | null
 
 const topExportRef = ref(null);
 const tableExportRef = ref(null);
@@ -310,62 +326,6 @@ const statusRef = ref(null);
 const insRef = ref(null);
 const bulkRef = ref(null);
 const rowRefs = reactive(new Map());
-
-const filters = reactive({
-  search: "",
-  dept: "all",
-  status: "all",
-  insurance: "all",
-});
-
-const totalPatients = ref(2450);
-const erVisits = ref(545);
-const inpatients = ref(1326);
-const outpatients = ref(579);
-
-const page = ref(1);
-const pageSize = ref(10);
-
-const selectedIds = ref(new Set());
-
-const patients = ref([
-  { id: 1, name: "Laura Williams", patientId: "P-2451", admissionDate: "2024-04-22", status: "er", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=47", dept: "cardiology" },
-  { id: 2, name: "Mark Johnson", patientId: "P-2452", admissionDate: "2024-04-21", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=12", dept: "orthopedics" },
-  { id: 3, name: "Cleo Anderson", patientId: "P-2449", admissionDate: "2024-04-18", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=32", dept: "pediatrics" },
-  { id: 4, name: "Olivia Harris", patientId: "P-2445", admissionDate: "2024-04-17", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=5", dept: "cardiology" },
-  { id: 5, name: "William Martinez", patientId: "P-2437", admissionDate: "2024-04-16", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=68", dept: "orthopedics" },
-  { id: 6, name: "William Clark", patientId: "P-2441", admissionDate: "2024-04-16", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=13", dept: "cardiology" },
-  { id: 7, name: "Emily Roberts", patientId: "P-2435", admissionDate: "2024-04-13", status: "outpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=43", dept: "pediatrics" },
-  { id: 8, name: "James Garrett", patientId: "P-2431", admissionDate: "2024-04-12", status: "outpatient", insurance: "selfpay", avatar: "https://i.pravatar.cc/80?img=59", dept: "orthopedics" },
-  { id: 9, name: "Michael Poster", patientId: "P-2429", admissionDate: "2024-04-10", status: "inpatient", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=9", dept: "cardiology" },
-  { id: 10, name: "Angelina Ward", patientId: "P-2425", admissionDate: "2024-04-09", status: "outpatient", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=30", dept: "pediatrics" },
-]);
-
-const filtered = computed(() => {
-  const q = filters.search.toLowerCase();
-  return patients.value.filter((p) => {
-    const matchesQ = !q || `${p.name} ${p.patientId}`.toLowerCase().includes(q);
-    const matchesDept = filters.dept === "all" || p.dept === filters.dept;
-    const matchesStatus = filters.status === "all" || p.status === filters.status;
-    const matchesIns = filters.insurance === "all" || p.insurance === filters.insurance;
-    return matchesQ && matchesDept && matchesStatus && matchesIns;
-  });
-});
-
-const totalPages = computed(() => Math.max(1, Math.ceil(filtered.value.length / pageSize.value)));
-
-const pagedPatients = computed(() => {
-  const start = (page.value - 1) * pageSize.value;
-  return filtered.value.slice(start, start + pageSize.value);
-});
-
-const isAllOnPageSelected = computed(() => pagedPatients.value.length && pagedPatients.value.every((p) => selectedIds.value.has(p.id)));
-const isSomeOnPageSelected = computed(() => pagedPatients.value.some((p) => selectedIds.value.has(p.id)));
-
-watch([() => filters.search, () => filters.dept, () => filters.status, () => filters.insurance, pageSize], () => {
-  page.value = 1;
-  closeAll();
-});
 
 function toggleDropdown(name) {
   openRowDropdown.value = null;
@@ -379,7 +339,6 @@ function closeAll() {
   openDropdown.value = null;
   openRowDropdown.value = null;
 }
-
 function setRowRef(id) {
   return (el) => {
     if (!el) rowRefs.delete(id);
@@ -390,9 +349,17 @@ function setRowRef(id) {
 /* click-out */
 function onDocClick(e) {
   if (!openDropdown.value && !openRowDropdown.value) return;
-  const t = e.target;
 
-  const globals = [topExportRef.value, tableExportRef.value, deptRef.value, statusRef.value, insRef.value, bulkRef.value].filter(Boolean);
+  const t = e.target;
+  const globals = [
+    topExportRef.value,
+    tableExportRef.value,
+    deptRef.value,
+    statusRef.value,
+    insRef.value,
+    bulkRef.value,
+  ].filter(Boolean);
+
   const rowEl = openRowDropdown.value != null ? rowRefs.get(openRowDropdown.value) : null;
 
   const insideGlobal = globals.some((el) => el.contains(t));
@@ -411,6 +378,93 @@ onBeforeUnmount(() => {
   document.removeEventListener("click", onDocClick, true);
   document.removeEventListener("keydown", onEsc, true);
 });
+
+/* =========================
+   Filters + data
+========================= */
+const filters = reactive({
+  search: "",
+  dept: "all",
+  status: "all",
+  insurance: "all",
+});
+
+/* summary numbers (static demo values) */
+const totalPatients = ref(2450);
+const erVisits = ref(545);
+const inpatients = ref(1326);
+const outpatients = ref(579);
+
+/* pagination */
+const page = ref(1);
+const pageSize = ref(10);
+
+/* ✅ SINGLE source of truth for selection */
+const selectedIds = ref(new Set());
+
+const patients = ref([
+  { id: 1, name: "Laura Williams", patientId: "P-2451", admissionDate: "2024-04-22", status: "er", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=47", dept: "cardiology" },
+  { id: 2, name: "Mark Johnson", patientId: "P-2452", admissionDate: "2024-04-21", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=12", dept: "orthopedics" },
+  { id: 3, name: "Cleo Anderson", patientId: "P-2449", admissionDate: "2024-04-18", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=32", dept: "pediatrics" },
+  { id: 4, name: "Olivia Harris", patientId: "P-2445", admissionDate: "2024-04-17", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=5", dept: "cardiology" },
+  { id: 5, name: "William Martinez", patientId: "P-2437", admissionDate: "2024-04-16", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=68", dept: "orthopedics" },
+  { id: 6, name: "William Clark", patientId: "P-2441", admissionDate: "2024-04-16", status: "inpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=13", dept: "cardiology" },
+  { id: 7, name: "Emily Roberts", patientId: "P-2435", admissionDate: "2024-04-13", status: "outpatient", insurance: "unitedcare", avatar: "https://i.pravatar.cc/80?img=43", dept: "pediatrics" },
+  { id: 8, name: "James Garrett", patientId: "P-2431", admissionDate: "2024-04-12", status: "outpatient", insurance: "selfpay", avatar: "https://i.pravatar.cc/80?img=59", dept: "orthopedics" },
+  { id: 9, name: "Michael Poster", patientId: "P-2429", admissionDate: "2024-04-10", status: "inpatient", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=9", dept: "cardiology" },
+  { id: 10, name: "Angelina Ward", patientId: "P-2425", admissionDate: "2024-04-09", status: "outpatient", insurance: "bluecross", avatar: "https://i.pravatar.cc/80?img=30", dept: "pediatrics" },
+]);
+
+/* filtering */
+const filtered = computed(() => {
+  const q = (filters.search || "").toLowerCase();
+  return patients.value.filter((p) => {
+    const matchesQ = !q || `${p.name} ${p.patientId}`.toLowerCase().includes(q);
+    const matchesDept = filters.dept === "all" || p.dept === filters.dept;
+    const matchesStatus = filters.status === "all" || p.status === filters.status;
+    const matchesIns = filters.insurance === "all" || p.insurance === filters.insurance;
+    return matchesQ && matchesDept && matchesStatus && matchesIns;
+  });
+});
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filtered.value.length / pageSize.value)));
+
+const pagedPatients = computed(() => {
+  const start = (page.value - 1) * pageSize.value;
+  return filtered.value.slice(start, start + pageSize.value);
+});
+
+/* ✅ selection helpers (FIXED: uses pagedPatients, not pageRows) */
+const isAllOnPageSelected = computed(() => {
+  if (!pagedPatients.value.length) return false;
+  return pagedPatients.value.every((r) => selectedIds.value.has(r.id));
+});
+const isSomeOnPageSelected = computed(() => {
+  return pagedPatients.value.some((r) => selectedIds.value.has(r.id));
+});
+
+/* reset on filter/pageSize changes */
+watch(
+  [() => filters.search, () => filters.dept, () => filters.status, () => filters.insurance, pageSize],
+  () => {
+    page.value = 1;
+    selectedIds.value = new Set();
+    closeAll();
+  }
+);
+
+/* selection actions */
+function toggleRow(id, checked) {
+  const next = new Set(selectedIds.value);
+  checked ? next.add(id) : next.delete(id);
+  selectedIds.value = next;
+}
+
+function toggleAllOnPage(checked) {
+  const next = new Set(selectedIds.value);
+  for (const p of pagedPatients.value) checked ? next.add(p.id) : next.delete(p.id);
+  selectedIds.value = next;
+}
 
 /* labels */
 const deptLabel = computed(() => {
@@ -439,27 +493,18 @@ function setDept(v) { filters.dept = v; closeAll(); }
 function setStatus(v) { filters.status = v; closeAll(); }
 function setInsurance(v) { filters.insurance = v; closeAll(); }
 
-/* selection */
-function toggleRow(id, checked) {
-  const next = new Set(selectedIds.value);
-  checked ? next.add(id) : next.delete(id);
-  selectedIds.value = next;
-}
-function toggleSelectAllOnPage(checked) {
-  const next = new Set(selectedIds.value);
-  for (const p of pagedPatients.value) checked ? next.add(p.id) : next.delete(p.id);
-  selectedIds.value = next;
-}
-
 /* actions */
 function onAdd() { console.log("Add new patient"); }
 function onView(p) { console.log("View", p); closeAll(); }
 function onEdit(p) { console.log("Edit", p); closeAll(); }
+
 function bulkSetStatus(s) {
+  if (!selectedIds.value.size) return;
   patients.value = patients.value.map((p) => (selectedIds.value.has(p.id) ? { ...p, status: s } : p));
   closeAll();
 }
 function bulkRemove() {
+  if (!selectedIds.value.size) return;
   const ids = new Set(selectedIds.value);
   patients.value = patients.value.filter((p) => !ids.has(p.id));
   selectedIds.value = new Set();
@@ -468,7 +513,9 @@ function bulkRemove() {
 function setOneStatus(p, s) { p.status = s; closeAll(); }
 function removeOne(p) {
   patients.value = patients.value.filter((x) => x.id !== p.id);
-  selectedIds.value.delete(p.id);
+  const next = new Set(selectedIds.value);
+  next.delete(p.id);
+  selectedIds.value = next;
   closeAll();
 }
 
@@ -499,9 +546,10 @@ function insuranceText(i) {
 
 /* export */
 function exportCSV(mode) {
-  const rows = mode === "selected"
-    ? patients.value.filter((p) => selectedIds.value.has(p.id))
-    : filtered.value;
+  const rows =
+    mode === "selected"
+      ? patients.value.filter((p) => selectedIds.value.has(p.id))
+      : filtered.value;
 
   const headers = ["Name", "Patient ID", "Admission Date", "Status", "Insurance", "Department"];
   const escape = (v) => {
@@ -512,7 +560,9 @@ function exportCSV(mode) {
   const csv = [
     headers.join(","),
     ...rows.map((p) =>
-      [p.name, p.patientId, p.admissionDate, statusText(p.status), insuranceText(p.insurance), p.dept].map(escape).join(",")
+      [p.name, p.patientId, p.admissionDate, statusText(p.status), insuranceText(p.insurance), p.dept]
+        .map(escape)
+        .join(",")
     ),
   ].join("\n");
 
@@ -529,6 +579,7 @@ function exportCSV(mode) {
 }
 </script>
 
+
 <style scoped>
 /* matches screenshot vibe (cool bluish panel + soft shadows) */
 .patients-ui {
@@ -537,6 +588,32 @@ function exportCSV(mode) {
   min-height: calc(100vh - 60px);
 }
 
+.patients-table thead th.w-check,
+.patients-table tbody td.w-check{
+  padding-left: 14px;   /* matches your existing th padding */
+  padding-right: 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+.patients-table thead th.w-check{
+  width: 46px;
+}
+.patients-table thead th.w-check .chk{
+  display: inline-block;
+  margin: 0;            /* prevents drifting */
+  transform: translateY(1px);
+}
+.patients-table tbody td.w-check .chk{
+  display: inline-block;
+  margin: 0;
+  transform: translateY(1px);
+}
+.th-name-cell,
+.th-chk-far,
+.th-chk,
+.th-name{
+  all: unset;
+}
 /* header */
 .topbar {
   display: flex;

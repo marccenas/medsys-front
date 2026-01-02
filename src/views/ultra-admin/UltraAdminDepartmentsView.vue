@@ -146,97 +146,189 @@ function chipClass(status) {
 .dept-page{
   display: grid;
   gap: 14px;
+  padding: 22px 22px 16px;
+  background: #eef3fb;
+  min-height: calc(100vh - 60px);
 }
 
+/* shared panel look (matches your other pages) */
+.panel{
+  background:#fff;
+  border-radius: 10px;
+  border: 1px solid rgba(45, 78, 140, .14);
+  box-shadow: 0 16px 32px rgba(17, 36, 80, 0.10);
+  overflow: hidden;
+}
+.panel-title{
+  padding: 12px 14px;
+  font-weight: 900;
+  color:#1f2a44;
+  background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(245,249,255,0.85));
+  border-bottom: 1px solid rgba(45, 78, 140, .12);
+}
+.panel-body{
+  padding: 12px 14px;
+}
+
+/* top row */
 .row{
   display:flex;
   align-items:center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
+/* search pill (patients/billing style) */
 .search{
-  flex:1;
+  flex: 1 1 320px;
   display:flex;
   align-items:center;
   gap:10px;
   padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:#fbfdff;
+  background:#f6f8ff;
+  border:1px solid rgba(45, 78, 140, .14);
+  border-radius:10px;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
 }
-
 .search input{
   width:100%;
   border:0;
   outline:0;
   background:transparent;
+  font-size:14px;
+  color:#2b3a5b;
+  font-weight:600;
 }
 
+/* main CTA */
+.btn{
+  border:none;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:800;
+  font-size:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(17, 36, 80, 0.08);
+  background: linear-gradient(180deg, #2f86ff, #1f6feb);
+  color:#fff;
+  white-space: nowrap;
+}
+
+/* grid section */
 .grid-2{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
+/* table wrapper */
 .table-wrap{
   overflow:auto;
+  padding: 0;
 }
 
+/* table */
 .tbl{
   width:100%;
-  border-collapse: collapse;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width: 720px;
 }
-
-th, td{
-  padding:12px;
-  border-bottom:1px solid var(--line);
-  font-size:14px;
-}
-
-th{
-  text-align:left;
-  color: var(--muted);
+.tbl thead th{
+  background:#f3f6ff;
+  font-size:13px;
+  color:#43506b;
   font-weight:900;
+  padding:14px 14px;
+  border-bottom:1px solid rgba(45, 78, 140, .14);
+  text-align:left;
+  white-space: nowrap;
+}
+.tbl tbody td{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(45, 78, 140, .10);
+  font-weight:700;
+  color:#2b3a5b;
+  background:#fff;
+}
+
+/* remove any hover effects (explicitly) */
+.tbl tbody tr:hover td{
+  background:#fff;
 }
 
 .strong{
   font-weight:900;
+  color:#1f2a44;
 }
 
 .badge{
-  background: rgba(45,118,214,0.12);
-  color: var(--blue);
-  padding: 4px 8px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width: 34px;
+  padding: 5px 10px;
   border-radius: 8px;
   font-weight:900;
+  background: rgba(45,118,214,0.12);
+  color:#2f86ff;
+  border: 1px solid rgba(45,118,214,0.20);
 }
 
 .chip{
-  padding: 6px 10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 6px 12px;
   border-radius: 999px;
   font-weight:900;
   font-size:12px;
+  border:1px solid transparent;
 }
 
 .chip-green{
-  background: rgba(34,197,94,0.15);
-  color:#166534;
+  background: rgba(44, 214, 175, .16);
+  border-color: rgba(44, 214, 175, .30);
+  color:#1b8f79;
 }
 
 .chip-orange{
-  background: rgba(249,115,22,0.15);
-  color:#9a3412;
+  background: rgba(255, 153, 69, .18);
+  border-color: rgba(255, 153, 69, .34);
+  color:#b45309;
 }
 
+/* chart panel */
 .chart-box{
   height: 260px;
   padding: 10px;
+  background: linear-gradient(180deg, rgba(248,251,255,0.90), rgba(244,248,255,0.70));
+  border: 1px solid rgba(45, 78, 140, .12);
+  border-radius: 10px;
 }
 
+/* responsive */
 @media (max-width: 1100px){
   .grid-2{
     grid-template-columns: 1fr;
   }
+  .tbl{
+    min-width: 680px;
+  }
 }
+
+@media (max-width: 640px){
+  .dept-page{
+    padding: 16px 14px 14px;
+  }
+  .btn{
+    width: 100%;
+    justify-content:center;
+  }
+}
+
 </style>
