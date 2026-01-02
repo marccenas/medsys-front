@@ -40,7 +40,12 @@ import {
   faGear,
   faKey,
   faCheck,
-  faDownload
+  faDownload,
+  faChevronDown,
+  faAngleLeft,
+  faAngleRight,
+  faNotesMedical,
+  faFileArrowDown
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -74,9 +79,13 @@ library.add(
   faGear,
   faKey,
   faCheck,
-  faDownload
+  faDownload,
+  faChevronDown,
+  faAngleLeft,
+  faAngleRight,
+  faNotesMedical,
+  faFileArrowDown
 );
-
 
 /* =========================
    App Init

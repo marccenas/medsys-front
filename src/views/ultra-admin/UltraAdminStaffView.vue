@@ -1,266 +1,326 @@
 <template>
-  <div class="staff-page">
-    <!-- HEADER -->
-    <div class="staff-header">
-      <div class="h-left">
-        <div class="h-title">Staff</div>
-        <div class="h-sub">
-          <span class="crumb strong">Staff Overview</span>
-          <span class="crumb muted">›</span>
-          <span class="crumb muted">Manage all hospital staff members.</span>
+  <div class="staff-ui">
+    <!-- Top Header -->
+    <div class="topbar">
+      <div class="title-col">
+        <h1 class="page-title">Staff</h1>
+        <div class="breadcrumb">
+          <span class="crumb-strong">Staff Overview</span>
+          <span class="crumb-sep">›</span>
+          <span class="crumb-muted">Manage all hospital staff members.</span>
         </div>
       </div>
 
-      <div class="h-right">
+      <div class="actions-col">
         <button class="btn btn-primary" type="button" @click="openAdd = true">
-          <font-awesome-icon icon="plus" />
+          <font-awesome-icon class="fa-ic" icon="plus" />
           <span>Add New Staff</span>
         </button>
 
-        <div class="dd" :class="{ open: exportTopOpen }" ref="exportTopRef" @click.stop>
-          <button class="btn btn-soft" type="button" @click.stop="exportTopOpen = !exportTopOpen">
-            <font-awesome-icon icon="download" class="faDownload-ico" />
-            <span class="btn-names">Export</span>
-            <span class="tri-ico" aria-hidden="true"></span>
-            <span class="caret">▾</span>
+        <div class="dropdown" ref="topExportRef">
+          <button class="btn btn-secondary" type="button" @click="toggleDropdown('topExport')">
+            <font-awesome-icon class="fa-ic" icon="file-arrow-down" />
+            <span>Export</span>
+            <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
           </button>
 
-          <div class="dd-menu btn-names" v-if="exportTopOpen" @click.stop>
-            <button class="dd-item btn-names" type="button" @click="exportCsv()">Export CSV</button>
-            <button class="dd-item btn-names" type="button" @click="exportSelectedCsv()">Export Selected (CSV)</button>
+          <div v-show="openDropdown === 'topExport'" class="menu menu-right" @click.stop>
+            <button class="menu-item" type="button" @click="exportCsv()">Export CSV</button>
+            <button class="menu-item" type="button" @click="exportSelectedCsv()">
+              Export Selected (CSV)
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- FILTERS BAR -->
-    <div class="filters-bar">
-      <div class="search-pill">
-        <font-awesome-icon icon="magnifying-glass" class="ico" />
-        <input v-model.trim="q" placeholder="Search..." />
+    <!-- Filters Row -->
+    <div class="filters">
+      <div class="search">
+        <font-awesome-icon class="fa-ic" icon="magnifying-glass" />
+        <input v-model.trim="q" type="text" placeholder="Search..." />
       </div>
 
-      <div class="pill-row">
-        <!-- ✅ add open class when open -->
-        <div class="dd dd-pill" :class="{ open: deptOpen }" ref="deptRef" @click.stop>
-          <button class="pill" type="button" @click.stop="deptOpen = !deptOpen">
-            <span class="pill-text">{{ deptLabel }}</span>
-            <span class="caret">▾</span>
+      <div class="dropdown" ref="deptRef">
+        <button class="filter-btn" type="button" @click="toggleDropdown('dept')">
+          <span>{{ deptLabel }}</span>
+          <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
+        </button>
+        <div v-show="openDropdown === 'dept'" class="menu" @click.stop>
+          <button class="menu-item" type="button" @click="setDept('')">All Departments</button>
+          <button
+            class="menu-item"
+            v-for="d in departments"
+            :key="d"
+            type="button"
+            @click="setDept(d)"
+          >
+            {{ d }}
           </button>
-          <div class="dd-menu" v-if="deptOpen" @click.stop>
-            <button class="dd-item" type="button" @click="setDept('')">All Departments</button>
-            <button class="dd-item" v-for="d in departments" :key="d" type="button" @click="setDept(d)">
-              {{ d }}
-            </button>
+        </div>
+      </div>
+
+      <div class="dropdown" ref="roleRef">
+        <button class="filter-btn" type="button" @click="toggleDropdown('role')">
+          <span>{{ roleLabel }}</span>
+          <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
+        </button>
+        <div v-show="openDropdown === 'role'" class="menu" @click.stop>
+          <button class="menu-item" type="button" @click="setRole('')">All Roles</button>
+          <button
+            class="menu-item"
+            v-for="r in roleOptions"
+            :key="r"
+            type="button"
+            @click="setRole(r)"
+          >
+            {{ r }}
+          </button>
+        </div>
+      </div>
+
+      <div class="dropdown" ref="statusRef">
+        <button class="filter-btn" type="button" @click="toggleDropdown('status')">
+          <span>{{ statusLabel }}</span>
+          <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
+        </button>
+        <div v-show="openDropdown === 'status'" class="menu" @click.stop>
+          <button class="menu-item" type="button" @click="setStatus('')">All Status</button>
+          <button class="menu-item" type="button" @click="setStatus('Active')">Active</button>
+          <button class="menu-item" type="button" @click="setStatus('Inactive')">Inactive</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="stats">
+      <div class="stats-label">
+        <span>Total Staff: </span>
+        <strong>{{ filteredAll.length.toLocaleString() }}</strong>
+      </div>
+
+      <div class="stat-card stat-blue">
+        <div class="stat-number">{{ counts.doctors.toLocaleString() }}</div>
+        <div class="stat-text">Doctors</div>
+      </div>
+
+      <div class="stat-card stat-teal">
+        <div class="stat-number">{{ counts.nurses.toLocaleString() }}</div>
+        <div class="stat-text">Nurses</div>
+      </div>
+
+      <div class="stat-card stat-purple">
+        <div class="stat-number">{{ counts.techs.toLocaleString() }}</div>
+        <div class="stat-text">Technicians</div>
+      </div>
+
+      <div class="stat-card stat-orange">
+        <div class="stat-number">{{ counts.admin.toLocaleString() }}</div>
+        <div class="stat-text">Admin Staff</div>
+      </div>
+    </div>
+
+    <!-- Table Controls -->
+    <div class="table-controls">
+      <div class="left-controls">
+        <input
+          class="chk"
+          type="checkbox"
+          :checked="isAllOnPageSelected"
+          :indeterminate.prop="isSomeOnPageSelected && !isAllOnPageSelected"
+          @change="toggleAllOnPage($event.target.checked)"
+        />
+
+        <div class="dropdown" ref="exportRef">
+          <button class="mini-btn" type="button" @click="toggleDropdown('export')">
+            <font-awesome-icon class="fa-ic" icon="file-arrow-down" />
+            <span>Export</span>
+          </button>
+          <div v-show="openDropdown === 'export'" class="menu" @click.stop>
+            <button class="menu-item" type="button" @click="exportCsv()">Export CSV</button>
+            <button class="menu-item" type="button" @click="exportSelectedCsv()">Export Selected (CSV)</button>
           </div>
         </div>
+      </div>
 
-        <div class="dd dd-pill" :class="{ open: roleOpen }" ref="roleRef" @click.stop>
-          <button class="pill" type="button" @click.stop="roleOpen = !roleOpen">
-            <span class="pill-text">{{ roleLabel }}</span>
-            <span class="caret">▾</span>
+      <div class="right-controls">
+        <div class="dropdown" ref="bulkRef">
+          <button class="mini-btn" type="button" @click="toggleDropdown('bulk')">
+            <span>Bulk Actions</span>
+            <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
           </button>
-          <div class="dd-menu" v-if="roleOpen" @click.stop>
-            <button class="dd-item" type="button" @click="setRole('')">All Roles</button>
-            <button class="dd-item" v-for="r in roleOptions" :key="r" type="button" @click="setRole(r)">
-              {{ r }}
-            </button>
-          </div>
-        </div>
 
-        <div class="dd dd-pill" :class="{ open: statusOpen }" ref="statusRef" @click.stop>
-          <button class="pill" type="button" @click.stop="statusOpen = !statusOpen">
-            <span class="pill-text">{{ statusLabel }}</span>
-            <span class="caret">▾</span>
-          </button>
-          <div class="dd-menu" v-if="statusOpen" @click.stop>
-            <button class="dd-item" type="button" @click="setStatus('')">All Status</button>
-            <button class="dd-item" type="button" @click="setStatus('Active')">Active</button>
-            <button class="dd-item" type="button" @click="setStatus('Inactive')">Inactive</button>
+          <div v-show="openDropdown === 'bulk'" class="menu menu-right" @click.stop>
+            <button class="menu-item" type="button" @click="bulkSetStatus('Active')">Mark as Active</button>
+            <button class="menu-item" type="button" @click="bulkSetStatus('Inactive')">Mark as Inactive</button>
+            <div class="menu-sep"></div>
+            <button class="menu-item danger" type="button" @click="bulkDelete()">Delete (UI)</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SUMMARY -->
-    <div class="summary-row">
-      <div class="total-card">
-        <div class="total-label">Total Staff:</div>
-        <div class="total-num">{{ filteredAll.length }}</div>
-      </div>
+    <!-- Table -->
+    <div class="table-wrap">
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th class="w-check"></th>
 
-      <div class="stats">
-        <div class="stat blue">
-          <div class="stat-num">{{ counts.doctors }}</div>
-          <div class="stat-lbl">Doctors</div>
-        </div>
-        <div class="stat teal">
-          <div class="stat-num">{{ counts.nurses }}</div>
-          <div class="stat-lbl">Nurses</div>
-        </div>
-        <div class="stat purple">
-          <div class="stat-num">{{ counts.techs }}</div>
-          <div class="stat-lbl">Technicians</div>
-        </div>
-        <div class="stat orange">
-          <div class="stat-num">{{ counts.admin }}</div>
-          <div class="stat-lbl">Admin Staff</div>
-        </div>
-      </div>
-    </div>
+            <th>
+              <div class="th-sort">
+                <span>Name</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-    <!-- TABLE CARD -->
-    <div class="table-card">
-      <div class="table-top">
-        <div class="tt-left">
-          <label class="cb">
-            <input type="checkbox" :checked="allChecked" @change="toggleAll($event.target.checked)" />
-            <span></span>
-          </label>
+            <th>
+              <div class="th-sort">
+                <span>Role</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-          <div class="dd dd-export" :class="{ open: exportOpen }" ref="exportRef" @click.stop>
-            <button class="btn btn-mini btn-soft" type="button" @click.stop="exportOpen = !exportOpen">
-              <span class="tri-ico" aria-hidden="true"></span>
-              <span class="btn-names">Export</span>
-              <span class="caret">▾</span>
-            </button>
+            <th>
+              <div class="th-sort">
+                <span>Department</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-            <div class="dd-menu" v-if="exportOpen" @click.stop>
-              <button class="dd-item" type="button" @click="exportCsv()">Export CSV</button>
-              <button class="dd-item" type="button" @click="exportSelectedCsv()">Export Selected (CSV)</button>
-            </div>
-          </div>
-        </div>
+            <th>
+              <div class="th-sort">
+                <span>Phone Number</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-        <div class="tt-right">
-          <!-- ✅ add open class when open -->
-          <div class="dd" :class="{ open: bulkOpen }" ref="bulkRef" @click.stop>
-            <button class="btn btn-mini btn-soft" type="button" @click.stop="bulkOpen = !bulkOpen">
-              <span class="tri-ico" aria-hidden="true"></span>
-              <span class="btn-names">Bulk Actions</span>
-              <span class="caret">▾</span>
-            </button>
+            <th>
+              <div class="th-sort">
+                <span>Email</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-            <div class="dd-menu" v-if="bulkOpen" @click.stop>
-              <button class="dd-item" type="button" @click="bulkSetStatus('Active')">Mark as Active</button>
-              <button class="dd-item" type="button" @click="bulkSetStatus('Inactive')">Mark as Inactive</button>
-              <button class="dd-item danger" type="button" @click="bulkDelete">Delete (UI)</button>
-            </div>
-          </div>
-        </div>
-      </div>
+            <th>
+              <div class="th-sort">
+                <span>Status</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
 
-      <div class="table-wrap">
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th class="col-check"></th>
-              <th><span class="th">Name</span><span class="th-caret">▾</span></th>
-              <th><span class="th">Role</span><span class="th-caret">▾</span></th>
-              <th><span class="th">Department</span><span class="th-caret">▾</span></th>
-              <th><span class="th">Phone Number</span><span class="th-caret">▾</span></th>
-              <th><span class="th">Email Address</span><span class="th-caret">▾</span></th>
-              <th><span class="th">Status</span><span class="th-caret">▾</span></th>
-              <th class="col-actions"><span class="th">Actions</span></th>
-            </tr>
-          </thead>
+            <th class="w-actions">
+              <div class="th-sort">
+                <span>Actions</span>
+                <font-awesome-icon class="fa-ic th-caret" icon="chevron-down" />
+              </div>
+            </th>
+          </tr>
+        </thead>
 
-          <tbody>
-            <tr v-for="s in pageRows" :key="s.id">
-              <td class="col-check">
-                <label class="cb">
-                  <input type="checkbox" v-model="selected" :value="s.id" />
-                  <span></span>
-                </label>
-              </td>
+        <tbody>
+          <tr v-for="s in pageRows" :key="s.id">
+            <td class="w-check">
+              <input class="chk" type="checkbox" :checked="selected.has(s.id)" @change="toggleRow(s.id, $event.target.checked)" />
+            </td>
 
-              <td>
-                <div class="namecell">
-                  <img class="photo" :src="s.photo || fallbackAvatar(s.name)" alt="photo" />
-                  <div class="nameinfo">
-                    <div class="nm">{{ s.name }}</div>
-                    <div class="sub muted">{{ s.title }}</div>
-                  </div>
+            <td>
+              <div class="name-cell">
+                <img class="avatar" :src="s.photo || fallbackAvatar(s.name)" alt="" />
+                <div class="name-meta">
+                  <div class="nm">{{ s.name }}</div>
+                  <div class="sub">{{ s.title }}</div>
                 </div>
-              </td>
+              </div>
+            </td>
 
-              <td class="muted">{{ s.role }}</td>
-              <td class="muted">{{ s.department }}</td>
+            <td class="muted">{{ s.role }}</td>
+            <td class="muted">{{ s.department }}</td>
 
-              <td class="muted">
-                <font-awesome-icon icon="phone" class="phone-ico" />
-                {{ s.phone }}
-              </td>
+            <td class="muted">
+              <font-awesome-icon class="fa-ic phone-ico" icon="phone" />
+              {{ s.phone }}
+            </td>
 
-              <td>
-                <a href="#" class="email" @click.prevent="noop">{{ s.email }}</a>
-              </td>
+            <td>
+              <a href="#" class="email" @click.prevent="noop">{{ s.email }}</a>
+            </td>
 
-              <td>
-                <span class="status" :class="s.status === 'Active' ? 'ok' : 'warn'">
-                  {{ s.status }}
-                </span>
-              </td>
+            <td>
+              <span class="badge" :class="s.status === 'Active' ? 'badge-ok' : 'badge-warn'">
+                {{ s.status }}
+              </span>
+            </td>
 
-              <td class="col-actions">
-                <!-- ✅ add open class when open -->
-                <div class="dd" :class="{ open: rowMenu === s.id }" :ref="(el) => (rowRefs[s.id] = el)" @click.stop>
-                  <button class="btn btn-mini btn-primary" type="button" @click.stop="toggleRowMenu(s.id)">
-                    <span>View</span>
-                    <span class="caret">▾</span>
-                  </button>
+            <td class="w-actions">
+              <div class="dropdown row-dd" :ref="setRowRef(s.id)">
+                <button class="view-btn" type="button" @click="toggleRowDropdown(s.id)">
+                  <span>View</span>
+                  <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
+                </button>
 
-                  <div class="dd-menu" v-if="rowMenu === s.id" @click.stop>
-                    <button class="dd-item" type="button" @click="viewStaff(s)">View Profile (UI)</button>
-                    <button class="dd-item" type="button" @click="editStaff(s)">Edit (UI)</button>
-                    <button class="dd-item danger" type="button" @click="deleteStaff(s.id)">Delete (UI)</button>
-                  </div>
+                <div v-show="openRowDropdown === s.id" class="menu menu-right" @click.stop>
+                  <button class="menu-item" type="button" @click="viewStaff(s)">View Profile (UI)</button>
+                  <button class="menu-item" type="button" @click="editStaff(s)">Edit (UI)</button>
+                  <div class="menu-sep"></div>
+                  <button class="menu-item danger" type="button" @click="deleteStaff(s.id)">Delete (UI)</button>
                 </div>
-              </td>
-            </tr>
+              </div>
+            </td>
+          </tr>
 
-            <tr v-if="pageRows.length === 0">
-              <td colspan="8" class="empty">No staff found.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <tr v-if="pageRows.length === 0">
+            <td colspan="8" class="empty">No staff found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- PAGER -->
-      <div class="pager">
-        <div class="pager-left">Showing {{ pageRows.length }} out of {{ filteredAll.length }} staff</div>
+    <!-- Footer pagination (Patients style) -->
+    <div class="table-footer">
+      <div class="footer-left">Showing {{ pageRows.length }} out of {{ filteredAll.length }} staff</div>
 
-        <div class="pager-right">
-          <button class="pbtn" :disabled="page === 1" @click="page--">‹</button>
+      <div class="footer-right">
+        <div class="pager">
+          <button class="pg-btn" :disabled="page === 1" @click="goTo(page - 1)">
+            <font-awesome-icon class="fa-ic" icon="angle-left" />
+          </button>
 
           <button
             v-for="p in pageButtons"
             :key="p"
-            class="pnum"
-            :class="{ on: p === page }"
-            @click="page = p"
+            class="pg-num"
+            :class="{ active: p === page }"
+            @click="goTo(p)"
           >
             {{ p }}
           </button>
 
-          <button class="pbtn" :disabled="page === totalPages" @click="page++">›</button>
+          <button class="pg-btn" :disabled="page === totalPages" @click="goTo(page + 1)">
+            <font-awesome-icon class="fa-ic" icon="angle-right" />
+          </button>
+        </div>
 
-          <!-- ✅ add open class when open -->
-          <div class="dd" :class="{ open: perOpen }" ref="perRef" @click.stop>
-            <button class="pbtn" type="button" @click.stop="perOpen = !perOpen">
-              {{ perPage }} / page <span class="caret">▾</span>
-            </button>
-            <div class="dd-menu" v-if="perOpen" @click.stop>
-              <button class="dd-item" type="button" @click="setPer(10)">10 / page</button>
-              <button class="dd-item" type="button" @click="setPer(20)">20 / page</button>
-              <button class="dd-item" type="button" @click="setPer(50)">50 / page</button>
-            </div>
+        <div class="dropdown" ref="perRef">
+          <button class="mini-btn mini-btn-compact" type="button" @click="toggleDropdown('per')">
+            <span>{{ perPage }}</span>
+            <span>/ page</span>
+            <font-awesome-icon class="fa-ic fa-caret" icon="chevron-down" />
+          </button>
+
+          <div v-show="openDropdown === 'per'" class="menu menu-right" @click.stop>
+            <button class="menu-item" type="button" @click="setPer(10)">10 / page</button>
+            <button class="menu-item" type="button" @click="setPer(20)">20 / page</button>
+            <button class="menu-item" type="button" @click="setPer(50)">50 / page</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ADD STAFF MODAL -->
+    <!-- clickout -->
+    <div v-if="openDropdown || openRowDropdown" class="clickout" @click="closeAll"></div>
+
+    <!-- Add Staff Modal -->
     <div class="modal" v-if="openAdd" @click.self="openAdd = false">
       <div class="modal-card">
         <div class="modal-head">
@@ -285,7 +345,7 @@
         </div>
 
         <div class="modal-foot">
-          <button class="btn btn-soft" type="button" @click="openAdd = false">Cancel</button>
+          <button class="btn btn-secondary" type="button" @click="openAdd = false">Cancel</button>
           <button class="btn btn-primary" type="button" @click="addStaff">Add Staff</button>
         </div>
       </div>
@@ -304,31 +364,23 @@ const dept = ref("");
 const role = ref("");
 const status = ref("");
 
-/* dropdowns */
-const deptOpen = ref(false);
-const roleOpen = ref(false);
-const statusOpen = ref(false);
-const bulkOpen = ref(false);
-const perOpen = ref(false);
-const exportOpen = ref(false);
-const exportTopOpen = ref(false);
-const rowMenu = ref(null);
-
-const deptRef = ref(null);
-const roleRef = ref(null);
-const statusRef = ref(null);
-const bulkRef = ref(null);
-const perRef = ref(null);
-const exportRef = ref(null);
-const exportTopRef = ref(null);
-const rowRefs = reactive({});
-
 /* paging */
 const page = ref(1);
 const perPage = ref(10);
 
-/* selections */
-const selected = ref([]);
+/* dropdowns */
+const openDropdown = ref(null); // 'topExport'|'dept'|'role'|'status'|'export'|'bulk'|'per'|null
+const openRowDropdown = ref(null); // staff id | null
+
+/* refs for click-out */
+const topExportRef = ref(null);
+const deptRef = ref(null);
+const roleRef = ref(null);
+const statusRef = ref(null);
+const exportRef = ref(null);
+const bulkRef = ref(null);
+const perRef = ref(null);
+const rowRefs = reactive(new Map());
 
 /* modal */
 const openAdd = ref(false);
@@ -342,7 +394,7 @@ const add = reactive({
   status: "Active",
 });
 
-/* dummy lists */
+/* options */
 const departments = ["Emergency", "Cardiology", "Neurology", "Radiology", "Pediatrics", "Administration"];
 const roleOptions = [
   "Attending Physician",
@@ -355,6 +407,9 @@ const roleOptions = [
   "Radiologic Technologist",
   "Admin Manager",
 ];
+
+/* selection */
+const selected = ref(new Set());
 
 /* data */
 const staff = ref([
@@ -381,7 +436,7 @@ onMounted(() => {
   }
 });
 
-/* computed labels */
+/* labels */
 const deptLabel = computed(() => (dept.value ? dept.value : "All Departments"));
 const roleLabel = computed(() => (role.value ? role.value : "All Roles"));
 const statusLabel = computed(() => (status.value ? status.value : "All Status"));
@@ -408,7 +463,6 @@ const filteredAll = computed(() => {
 const counts = computed(() => {
   const list = filteredAll.value;
   const by = (pred) => list.filter(pred).length;
-
   return {
     doctors: by((s) => /Doctor|Physician/i.test(s.role)),
     nurses: by((s) => /Nurse/i.test(s.role)),
@@ -422,8 +476,8 @@ const totalPages = computed(() => Math.max(1, Math.ceil(filteredAll.value.length
 
 watch([q, dept, role, status, perPage], () => {
   page.value = 1;
-  selected.value = [];
-  rowMenu.value = null;
+  selected.value = new Set();
+  closeAll();
 });
 
 const pageRows = computed(() => {
@@ -441,48 +495,101 @@ const pageButtons = computed(() => {
   return out;
 });
 
-/* checkbox helpers */
-const allChecked = computed(() => {
+/* selection helpers */
+const isAllOnPageSelected = computed(() => {
   if (!pageRows.value.length) return false;
-  return pageRows.value.every((r) => selected.value.includes(r.id));
+  return pageRows.value.every((r) => selected.value.has(r.id));
 });
+const isSomeOnPageSelected = computed(() => pageRows.value.some((r) => selected.value.has(r.id)));
 
-function toggleAll(checked) {
-  const ids = pageRows.value.map((r) => r.id);
-  if (checked) selected.value = Array.from(new Set([...selected.value, ...ids]));
-  else selected.value = selected.value.filter((id) => !ids.includes(id));
+function toggleRow(id, checked) {
+  const next = new Set(selected.value);
+  checked ? next.add(id) : next.delete(id);
+  selected.value = next;
+}
+function toggleAllOnPage(checked) {
+  const next = new Set(selected.value);
+  for (const r of pageRows.value) checked ? next.add(r.id) : next.delete(r.id);
+  selected.value = next;
 }
 
-/* dropdown setters */
-function setDept(v) { dept.value = v; deptOpen.value = false; }
-function setRole(v) { role.value = v; roleOpen.value = false; }
-function setStatus(v) { status.value = v; statusOpen.value = false; }
-function setPer(v) { perPage.value = v; perOpen.value = false; }
+/* dropdown + click-out */
+function toggleDropdown(name) {
+  openRowDropdown.value = null;
+  openDropdown.value = openDropdown.value === name ? null : name;
+}
+function toggleRowDropdown(id) {
+  openDropdown.value = null;
+  openRowDropdown.value = openRowDropdown.value === id ? null : id;
+}
+function closeAll() {
+  openDropdown.value = null;
+  openRowDropdown.value = null;
+}
+function setRowRef(id) {
+  return (el) => {
+    if (!el) rowRefs.delete(id);
+    else rowRefs.set(id, el);
+  };
+}
+
+function onDocClick(e) {
+  if (!openDropdown.value && !openRowDropdown.value) return;
+  const t = e.target;
+
+  const globals = [topExportRef.value, deptRef.value, roleRef.value, statusRef.value, exportRef.value, bulkRef.value, perRef.value].filter(Boolean);
+  const rowEl = openRowDropdown.value != null ? rowRefs.get(openRowDropdown.value) : null;
+
+  const insideGlobal = globals.some((el) => el.contains(t));
+  const insideRow = rowEl ? rowEl.contains(t) : false;
+
+  if (!insideGlobal && !insideRow) closeAll();
+}
+function onEsc(e) {
+  if (e.key === "Escape") closeAll();
+}
+onMounted(() => {
+  document.addEventListener("click", onDocClick, true);
+  document.addEventListener("keydown", onEsc, true);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("click", onDocClick, true);
+  document.removeEventListener("keydown", onEsc, true);
+});
+
+/* setters */
+function setDept(v) { dept.value = v; closeAll(); }
+function setRole(v) { role.value = v; closeAll(); }
+function setStatus(v) { status.value = v; closeAll(); }
+function setPer(v) { perPage.value = v; closeAll(); }
 
 /* row actions */
-function toggleRowMenu(id) { rowMenu.value = rowMenu.value === id ? null : id; }
-function viewStaff(s) { window.alert(`Viewing ${s.name} (UI only)`); rowMenu.value = null; }
-function editStaff(s) { window.alert(`Editing ${s.name} (UI only)`); rowMenu.value = null; }
+function viewStaff(s) { window.alert(`Viewing ${s.name} (UI only)`); closeAll(); }
+function editStaff(s) { window.alert(`Editing ${s.name} (UI only)`); closeAll(); }
 function deleteStaff(id) {
   staff.value = staff.value.filter((x) => x.id !== id);
-  selected.value = selected.value.filter((x) => x !== id);
+  const next = new Set(selected.value);
+  next.delete(id);
+  selected.value = next;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(staff.value));
-  rowMenu.value = null;
+  closeAll();
 }
 
 /* bulk */
 function bulkSetStatus(v) {
-  if (!selected.value.length) return window.alert("Select at least one staff.");
-  staff.value = staff.value.map((s) => (selected.value.includes(s.id) ? { ...s, status: v } : s));
+  if (!selected.value.size) return window.alert("Select at least one staff.");
+  const ids = selected.value;
+  staff.value = staff.value.map((s) => (ids.has(s.id) ? { ...s, status: v } : s));
   localStorage.setItem(STORAGE_KEY, JSON.stringify(staff.value));
-  bulkOpen.value = false;
+  closeAll();
 }
 function bulkDelete() {
-  if (!selected.value.length) return window.alert("Select at least one staff.");
-  staff.value = staff.value.filter((s) => !selected.value.includes(s.id));
-  selected.value = [];
+  if (!selected.value.size) return window.alert("Select at least one staff.");
+  const ids = selected.value;
+  staff.value = staff.value.filter((s) => !ids.has(s.id));
+  selected.value = new Set();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(staff.value));
-  bulkOpen.value = false;
+  closeAll();
 }
 
 /* modal add */
@@ -514,16 +621,14 @@ function addStaff() {
 
 /* export csv */
 function exportSelectedCsv() {
-  if (!selected.value.length) return window.alert("Select at least one staff to export.");
-  const rows = filteredAll.value.filter((r) => selected.value.includes(r.id));
+  if (!selected.value.size) return window.alert("Select at least one staff to export.");
+  const rows = filteredAll.value.filter((r) => selected.value.has(r.id));
   downloadCsv(rows, "staff_selected.csv");
-  exportOpen.value = false;
-  exportTopOpen.value = false;
+  closeAll();
 }
 function exportCsv() {
   downloadCsv(filteredAll.value, "staff.csv");
-  exportOpen.value = false;
-  exportTopOpen.value = false;
+  closeAll();
 }
 function downloadCsv(rows, filename) {
   const header = ["Name", "Role", "Department", "Phone", "Email", "Status"];
@@ -554,362 +659,467 @@ function fallbackAvatar(name) {
 
 function noop(){}
 
-/* outside click close */
-function onWindowClick(e) {
-  const closeIfOutside = (refEl, stateRef) => {
-    if (refEl?.value && !refEl.value.contains(e.target)) stateRef.value = false;
-  };
-
-  closeIfOutside(deptRef, deptOpen);
-  closeIfOutside(roleRef, roleOpen);
-  closeIfOutside(statusRef, statusOpen);
-  closeIfOutside(bulkRef, bulkOpen);
-  closeIfOutside(perRef, perOpen);
-  closeIfOutside(exportRef, exportOpen);
-  closeIfOutside(exportTopRef, exportTopOpen);
-
-  if (rowMenu.value) {
-    const holder = rowRefs[rowMenu.value];
-    if (holder && !holder.contains(e.target)) rowMenu.value = null;
-  }
+/* pagination */
+function goTo(p) {
+  const next = Math.min(Math.max(1, p), totalPages.value);
+  page.value = next;
 }
-
-onMounted(() => window.addEventListener("click", onWindowClick, true));
-onBeforeUnmount(() => window.removeEventListener("click", onWindowClick, true));
 </script>
 
 <style scoped>
-.dd.open{
-  z-index: 10000;
+/* ================
+   Patients-matching layout
+================ */
+.staff-ui{
+  padding: 22px 22px 16px;
+  background: #eef3fb;
+  min-height: calc(100vh - 60px);
 }
 
-.dd.open .dd-menu{
-  z-index: 10001;
+/* header */
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+.page-title{
+  margin:0;
+  font-size:32px;
+  letter-spacing:-0.02em;
+  font-weight:700;
+  color:#1f2a44;
+}
+.breadcrumb{
+  margin-top:6px;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.crumb-strong{ color:#26355f; font-weight:600; }
+.crumb-sep{ opacity:.5; }
+.crumb-muted{ opacity:.7; }
+
+.actions-col{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
-.dd-menu{
+/* buttons (same as Patients) */
+.btn{
+  border:none;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:600;
+  font-size:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  box-shadow: 0 6px 18px rgba(17, 36, 80, 0.08);
+}
+.btn-primary{
+  background: linear-gradient(180deg, #2f86ff, #1f6feb);
+  color:#fff;
+}
+.btn-secondary{
+  background:#e9eef9;
+  color:#33415c;
+  border:1px solid rgba(45, 78, 140, .15);
+}
+
+/* filters */
+.filters{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin: 6px 0 14px;
+}
+.search{
+  flex: 1 1 260px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#f6f8ff;
+  border:1px solid rgba(45, 78, 140, .14);
+  border-radius:8px;
+  padding:10px 12px;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
+}
+.search input{
+  border:none;
+  outline:none;
+  background:transparent;
+  width:100%;
+  font-size:14px;
+}
+
+.filter-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width: 170px;
+  padding:10px 12px;
+  background:#f6f8ff;
+  border:1px solid rgba(45, 78, 140, .14);
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  color:#33415c;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
+}
+
+/* stats row (same pattern) */
+.stats{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.stats-label{
+  flex: 0 0 auto;
+  background:#f6f8ff;
+  border:1px solid rgba(45, 78, 140, .12);
+  border-radius:8px;
+  padding:14px 18px;
+  color:#2b3a5b;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
+}
+.stats-label strong{ font-size:18px; }
+
+.stat-card{
+  flex: 1 1 190px;
+  min-width: 190px;
+  border-radius:8px;
+  padding:14px 16px;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow: 0 14px 26px rgba(17, 36, 80, 0.14);
+}
+.stat-number{ font-size:30px; font-weight:800; line-height:1; }
+.stat-text{ font-weight:700; opacity:.95; }
+.stat-blue{ background: linear-gradient(90deg, #2f86ff, #2c63d6); }
+.stat-teal{ background: linear-gradient(90deg, #45d3c2, #25b6a8); }
+.stat-purple{ background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+.stat-orange{ background: linear-gradient(90deg, #ffb15a, #ff8e3d); }
+
+/* table controls */
+.table-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.left-controls, .right-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.chk{
+  width:18px;
+  height:18px;
+  accent-color:#2f86ff;
+}
+.mini-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:8px;
+  border:1px solid rgba(45, 78, 140, .14);
+  background:#f6f8ff;
+  font-weight:700;
+  color:#33415c;
+  cursor:pointer;
+  box-shadow: 0 10px 22px rgba(17, 36, 80, 0.06);
+}
+.mini-btn:disabled{ opacity:.55; cursor:not-allowed; }
+.mini-btn-compact{ padding:10px 12px; }
+
+/* dropdown menu (same as Patients) */
+.dropdown{ position:relative; }
+.menu{
+  position:absolute;
+  top: calc(100% + 10px);
+  left:0;
+  min-width:220px;
+  background:#ffffff;
+  border:1px solid rgba(45, 78, 140, .16);
+  border-radius:10px;
+  padding:8px;
+  box-shadow: 0 18px 40px rgba(17, 36, 80, 0.18);
   z-index: 9999;
 }
-
-.btn-names{ color:#0f172a !important; }
-
-.tri-ico{
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 7px solid rgba(100,116,139,0.85);
-  display:inline-block;
-  transform: translateY(1px);
-}
-
-.table-card,
-.table-top{
-  overflow: visible;
-}
-
-.dd-export .dd-menu{
-  left: 0;
-  right: auto;
-  min-width: 220px;
-}
-
-.faDownload-ico{
-  font-size: 14px;
-  color: #2563eb;
-  display: inline-block;
-}
-
-/* ======= KEEP THE REST OF YOUR STYLES EXACTLY AS YOU HAD THEM ======= */
-
-/* =========================
-   Font + base (match screenshot)
-   ========================= */
-.staff-page{
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  overflow-x: hidden;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-  color: #0f172a;
-}
-.staff-page{
-  background: linear-gradient(180deg, rgba(246,249,255,0.95), rgba(244,248,255,0.78));
-  border-radius: 14px;
-  padding: 18px 18px 14px;
-}
-
-/* HEADER */
-.staff-header{ display:flex; justify-content: space-between; align-items:flex-start; gap: 12px; flex-wrap: wrap; }
-.h-left{ min-width: 0; }
-.h-title{ font-size: 22px; font-weight: 800; letter-spacing: .2px; }
-.h-sub{ margin-top: 6px; display:flex; gap: 8px; align-items:center; flex-wrap: wrap; font-size: 13px; }
-.strong{ font-weight: 400; }
-.muted{ color:#64748b; }
-.h-right{ display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
-
-/* Buttons */
-.btn{
-  display:inline-flex; align-items:center; gap: 10px;
-  height: 38px; padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(203,213,225,0.85);
-  background: #fff;
-  font-weight: 700;
-  font-size: 13px;
-  cursor:pointer;
-  box-shadow: 0 8px 18px rgba(15,23,42,0.05);
-}
-.btn:hover{ transform: translateY(-1px); }
-.btn:active{ transform: translateY(0); }
-.btn-primary{
-  color:#fff;
-  border-color: rgba(59,130,246,0.35);
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
-  box-shadow: 0 12px 22px rgba(37,99,235,0.22);
-}
-.btn-soft{ background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,246,255,0.92)); }
-.btn-mini{ height: 34px; padding: 0 12px; border-radius: 9px; font-size: 12px; }
-
-/* FILTERS */
-.filters-bar{ margin-top: 14px; display:flex; align-items:center; gap: 10px; flex-wrap: wrap; width: 100%; }
-.search-pill{
-  flex: 1 1 360px; min-width: 0;
-  display:flex; align-items:center; gap: 10px;
-  height: 40px; padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(203,213,225,0.65);
-  background: rgba(255,255,255,0.92);
-  box-shadow: 0 10px 22px rgba(15,23,42,0.06);
-}
-.search-pill input{
-  width:100%; min-width:0; border:0; outline:0; background: transparent;
-  font-weight: 700; font-size: 13px; color:#0f172a;
-}
-.ico{ color:#3b82f6; }
-.pill-row{ display:flex; align-items:center; gap: 10px; flex-wrap: wrap; }
-.dd{ position: relative; z-index: 40; }
-.dd-pill{ flex: 0 0 auto; }
-.pill{
-  height: 40px; min-width: 170px; max-width: 220px;
-  display:flex; align-items:center; justify-content: space-between; gap: 10px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(203,213,225,0.65);
-  background: rgba(255,255,255,0.92);
-  cursor:pointer;
-  font-weight: 400;
-  font-size: 13px;
-  box-shadow: 0 10px 22px rgba(15,23,42,0.05);
-}
-.pill-text{ min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.caret{ opacity:.8; font-size: 12px; }
-
-.dd-menu{
-  position:absolute;
-  top: calc(100% + 8px);
-  left:0;
-  right:0;
-  background:#fff;
-  border-radius: 12px;
-  border: 1px solid rgba(226,232,244,0.95);
-  box-shadow: 0 22px 44px rgba(15,23,42,0.14);
-  overflow:hidden;
-}
-.dd-item{
+.menu-right{ left:auto; right:0; }
+.menu-item{
   width:100%;
   text-align:left;
-  padding: 10px 12px;
-  border:0;
-  background:#fff;
+  border:none;
+  background:transparent;
+  padding:10px 10px;
+  border-radius:8px;
+  font-weight:600;
+  color:#2b3a5b;
   cursor:pointer;
-  font-weight: 700;
-  font-size: 13px;
 }
-.dd-item:hover{ background:#f3f7ff; }
-.dd-item.danger{ color:#b42318; }
-
-/* SUMMARY */
-.summary-row{ margin-top: 14px; display:flex; align-items:stretch; gap: 10px; flex-wrap: wrap; }
-.total-card{
-  min-width: 180px;
-  border-radius: 12px;
-  border: 1px solid rgba(203,213,225,0.65);
-  background: rgba(255,255,255,0.88);
-  box-shadow: 0 14px 30px rgba(15,23,42,0.06);
-  padding: 12px 14px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
+.menu-item:hover{ background:#eef4ff; }
+.menu-sep{
+  height:1px;
+  background: rgba(45, 78, 140, .14);
+  margin:6px 4px;
 }
-.total-label{ color:#475569; font-weight: 800; font-size: 13px; }
-.total-num{ font-weight: 900; font-size: 18px; color:#0f172a; }
-.stats{ flex: 1 1 520px; display:grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; min-width: 0; }
-.stat{
-  border-radius: 12px;
-  padding: 12px 14px;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  box-shadow: 0 18px 34px rgba(15,23,42,0.10);
-}
-.stat-num{ font-size: 22px; font-weight: 900; letter-spacing: .2px; }
-.stat-lbl{ font-weight: 800; opacity: .95; }
-.stat.blue{ background: linear-gradient(90deg, #3b82f6, #2563eb); }
-.stat.teal{ background: linear-gradient(90deg, #14b8a6, #0d9488); }
-.stat.purple{ background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
-.stat.orange{ background: linear-gradient(90deg, #f59e0b, #f97316); }
+.menu-item.danger{ color:#b42318; }
+.menu-item.danger:hover{ background: rgba(180,35,24,.08); }
 
-/* TABLE CARD */
-.table-card{
-  margin-top: 14px;
-  border-radius: 14px;
-  border: 1px solid rgba(203,213,225,0.65);
-  background: rgba(255,255,255,0.86);
-  box-shadow: 0 18px 40px rgba(15,23,42,0.08);
-}
-.table-top{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(226,232,244,0.9);
-  background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(245,249,255,0.85));
-}
-.tt-left{ display:flex; align-items:center; gap: 10px; }
-.tt-right{ display:flex; align-items:center; gap: 10px; }
-
-.table-wrap{ overflow-x:auto; -webkit-overflow-scrolling: touch; }
-.tbl{ width:100%; border-collapse: collapse; min-width: 980px; }
-
-th, td{
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(226,232,244,0.85);
-  font-size: 13px;
-  vertical-align: middle;
-}
-thead th{
-  background: rgba(245,248,255,0.9);
-  color:#475569;
-  font-weight: 900;
-  white-space: nowrap;
-}
-.th{ font-weight: 900; }
-.th-caret{ margin-left: 6px; opacity:.45; font-size: 11px; }
-tbody tr:hover{ background: #f6f9ff; }
-
-.col-check{ width: 44px; }
-.col-actions{ width: 120px; }
-
-.empty{ text-align:center; padding: 26px; color:#64748b; font-weight: 800; }
-
-.namecell{ display:flex; align-items:center; gap: 10px; min-width: 0; }
-.photo{ width: 34px; height: 34px; border-radius: 999px; object-fit: cover; box-shadow: 0 10px 20px rgba(15,23,42,0.10); }
-.nameinfo{ min-width: 0; }
-.nm{ font-weight: 900; color:#0f172a; line-height: 1.1; }
-.sub{ font-size: 12px; line-height: 1.1; margin-top: 2px; }
-
-.phone-ico{ margin-right: 8px; color:#2563eb; }
-
-.email{ color:#2563eb; font-weight: 800; text-decoration:none; }
-.email:hover{ text-decoration: underline; }
-
-.status{
-  display:inline-flex; align-items:center; justify-content:center;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-weight: 900;
-  font-size: 12px;
-  border: 1px solid transparent;
-}
-.status.ok{ background: rgba(16,185,129,0.14); border-color: rgba(16,185,129,0.28); color:#0f766e; }
-.status.warn{ background: rgba(245,158,11,0.14); border-color: rgba(245,158,11,0.30); color:#b45309; }
-
-.cb{ display:inline-flex; align-items:center; cursor:pointer; }
-.cb input{ display:none; }
-.cb span{
-  width: 16px; height: 16px;
-  border-radius: 5px;
-  border: 1px solid rgba(148,163,184,0.75);
+/* table */
+.table-wrap{
   background:#fff;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+  border-radius:10px;
+  border:1px solid rgba(45, 78, 140, .14);
+  box-shadow: 0 16px 32px rgba(17, 36, 80, 0.10);
+  overflow:hidden;
 }
-.cb input:checked + span{
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
-  border-color: rgba(37,99,235,0.55);
+.staff-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.staff-table thead th{
+  background:#f3f6ff;
+  font-size:13px;
+  color:#43506b;
+  font-weight:800;
+  padding:14px 14px;
+  border-bottom:1px solid rgba(45, 78, 140, .14);
+}
+.staff-table tbody td{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(45, 78, 140, .10);
+  font-weight:600;
+  color:#2b3a5b;
+}
+.staff-table tbody tr:hover td{ background:#f8faff; }
+
+.w-check{ width:46px; }
+.w-actions{ width:150px; text-align:right; }
+
+.th-sort{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.th-caret{ opacity:.6; font-size:12px; }
+
+.name-cell{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.avatar{
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:2px solid #dbe6ff;
+  object-fit:cover;
+  background:#fff;
+}
+.name-meta{ min-width:0; }
+.nm{ font-weight:800; color:#1f2a44; line-height:1.1; }
+.sub{ margin-top:2px; font-size:12px; opacity:.75; font-weight:700; }
+
+.muted{ opacity:.8; }
+
+.phone-ico{ opacity:.85; margin-right:8px; }
+
+.email{
+  color:#2f86ff;
+  text-decoration:none;
+  font-weight:800;
+}
+.email:hover{ text-decoration:underline; }
+
+/* status badge (staff version matching Patients badge feel) */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:6px;
+  font-weight:900;
+  font-size:13px;
+  border:1px solid transparent;
+}
+.badge-ok{
+  background: rgba(44, 214, 175, .16);
+  border-color: rgba(44, 214, 175, .30);
+  color:#1b8f79;
+}
+.badge-warn{
+  background: rgba(255, 177, 90, .18);
+  border-color: rgba(255, 177, 90, .34);
+  color:#b56a14;
 }
 
+/* view button (same as Patients) */
+.view-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width: 108px;
+  padding:10px 12px;
+  border:none;
+  border-radius:8px;
+  background: linear-gradient(180deg, #2f86ff, #1f6feb);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow: 0 10px 22px rgba(47, 134, 255, 0.28);
+}
+
+.empty{
+  text-align:center;
+  padding:22px 14px;
+  color:#617093;
+  font-weight:800;
+}
+
+/* footer pagination (Patients style) */
+.table-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding: 10px 6px 0;
+  margin-top:10px;
+  color:#4b5873;
+  font-weight:600;
+}
+.footer-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 .pager{
-  display:flex; justify-content: space-between; align-items:center;
-  gap: 10px; padding: 10px 12px;
-  background: rgba(245,248,255,0.75);
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
-.pager-left{ color:#64748b; font-weight: 800; font-size: 12px; }
-.pager-right{ display:flex; align-items:center; gap: 6px; flex-wrap: wrap; }
-.pbtn, .pnum{
-  height: 30px; min-width: 30px; padding: 0 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(203,213,225,0.75);
-  background:#fff;
-  font-weight: 900;
-  font-size: 12px;
+.pg-btn, .pg-num{
+  border:1px solid rgba(45, 78, 140, .18);
+  background:#f6f8ff;
+  color:#2b3a5b;
+  border-radius:6px;
+  height:30px;
+  min-width:30px;
+  padding:0 10px;
   cursor:pointer;
+  font-weight:800;
 }
-.pbtn:disabled{ opacity:.45; cursor:not-allowed; }
-.pnum.on{
-  background: linear-gradient(180deg, #3b82f6, #2563eb);
+.pg-btn:disabled{ opacity:.5; cursor:not-allowed; }
+.pg-num.active{
+  background:#2f86ff;
+  border-color:#2f86ff;
   color:#fff;
-  border-color: rgba(37,99,235,0.55);
 }
 
+/* clickout */
+.clickout{
+  position:fixed;
+  inset:0;
+  z-index: 9000;
+  background:transparent;
+}
+
+/* modal aligned with Patients look */
 .modal{
-  position: fixed; inset: 0;
-  background: rgba(15,23,42,0.35);
-  display:grid; place-items:center;
-  z-index: 200;
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 36, 80, 0.35);
+  display:grid;
+  place-items:center;
+  z-index: 12000;
 }
 .modal-card{
   width: min(760px, 92vw);
   border-radius: 16px;
   background:#fff;
-  border: 1px solid rgba(226,232,244,0.95);
-  box-shadow: 0 30px 70px rgba(15,23,42,0.25);
+  border: 1px solid rgba(45, 78, 140, .14);
+  box-shadow: 0 30px 70px rgba(17, 36, 80, 0.25);
   overflow:hidden;
 }
 .modal-head{
-  display:flex; justify-content: space-between; align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   padding: 12px 14px;
   background: linear-gradient(180deg, rgba(248,251,255,0.95), rgba(245,249,255,0.85));
-  border-bottom: 1px solid rgba(226,232,244,0.9);
+  border-bottom: 1px solid rgba(45, 78, 140, .12);
 }
-.modal-title{ font-weight: 900; }
-.x{ border:0; background:transparent; cursor:pointer; font-weight: 900; font-size: 16px; }
+.modal-title{ font-weight:900; color:#1f2a44; }
+.x{
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  font-weight: 600;
+  font-size: 16px;
+  color:#33415c;
+}
 .modal-body{ padding: 14px; }
 .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .input2{
   width:100%;
   padding: 11px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(226,232,244,0.95);
+  border: 1px solid rgba(45, 78, 140, .14);
   background:#fbfdff;
-  font-weight: 800;
+  font-weight: 700;
   outline:none;
 }
-.hint{ margin-top: 10px; font-size: 12px; color:#64748b; font-weight: 800; }
-.modal-foot{ display:flex; justify-content:flex-end; gap: 10px; padding: 12px 14px; border-top: 1px solid rgba(226,232,244,0.9); }
-
-@media (max-width: 980px){
-  .stats{ grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+.hint{ margin-top: 10px; font-size: 12px; color:#64748b; font-weight: 700; }
+.modal-foot{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(45, 78, 140, .12);
 }
-@media (max-width: 640px){
-  .staff-page{ padding: 14px 12px 12px; }
-  .h-right{ width: 100%; justify-content: flex-end; }
-  .btn{ height: 40px; }
-  .pill{ min-width: 0; width: 100%; max-width: none; }
-  .pill-row{ width: 100%; display:grid; grid-template-columns: 1fr; }
-  .stats{ grid-template-columns: 1fr; }
+
+/* FontAwesome minimal */
+.fa-ic{
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  line-height: 1;
+}
+.fa-caret{
+  font-size: .85em;
+  opacity: .75;
+}
+:deep(.fa-ic) svg{
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+/* responsive */
+@media (max-width: 980px){
+  .actions-col{ width:100%; justify-content:flex-start; }
+  .btn{ width:100%; justify-content:center; }
+  .filter-btn{ min-width: 180px; flex:1 1 180px; }
   .grid2{ grid-template-columns: 1fr; }
 }
 </style>

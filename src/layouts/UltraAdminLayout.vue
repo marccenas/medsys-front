@@ -23,7 +23,7 @@
           <font-awesome-icon icon="users" /> <span>Staff</span>
         </button>
 
-        <button class="ua-link" @click="notReady('Patients')">
+        <button class="ua-link" :class="{ active: isActive('patients') }" @click="go('patients')">
           <font-awesome-icon icon="hospital-user" /> <span>Patients</span>
         </button>
 
@@ -201,6 +201,7 @@ const pageTitle = computed(() => {
   const p = route.path;
   if (p.includes("/departments")) return "Departments Overview";
   if (p.includes("/staff")) return "Staff";
+  if (p.includes("/patients")) return "patients";
   if (p.includes("/admin-management")) return "Admin Management";
   return "Dashboard";
 });
