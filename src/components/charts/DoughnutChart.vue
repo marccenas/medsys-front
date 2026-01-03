@@ -139,11 +139,5 @@ onBeforeUnmount(() => destroyChart());
   background: radial-gradient(circle at 30% 20%, rgba(45,118,214,0.18), transparent 55%);
   pointer-events:none;
 }
-.chart-card:hover{
-  transform: translateY(-1px);
-  box-shadow:
-    0 22px 42px rgba(34,50,74,0.16),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-}
 canvas{ position: relative; z-index: 1; }
 </style>

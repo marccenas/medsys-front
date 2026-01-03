@@ -32,13 +32,13 @@
             <h3 class="group-title">Management and Physicians</h3>
             <div class="group-grid">
 
-              <UiCard @click="goUltraAdmin">
+              <UiCard @click="goUltraAdmin('Ultra Admin')">
                 <template #icon><font-awesome-icon icon="shield-halved" /></template>
                 <template #title>Ultra Admin</template>
                 <template #sub>System access</template>
               </UiCard>
 
-              <UiCard @click="notReady('Senior Consultants / Attending Physicians')">
+              <UiCard @click="goPhysician('Senior Consultants / Attending Physicians')">
                 <template #icon><font-awesome-icon icon="user-doctor" /></template>
                 <template #title>Senior Consultants / Attending Physicians</template>
                 <template #sub>Medical leadership</template>
@@ -169,8 +169,6 @@ import UiCard from "../components/UiCard.vue";
 const router = useRouter();
 
 onMounted(() => {
-  // Frontend-only route protection:
-  // If user didn't "login", force back to login page.
   const isLoggedIn = localStorage.getItem("medsystem_logged_in") === "true";
   if (!isLoggedIn) router.replace("/login");
 });
@@ -178,13 +176,18 @@ onMounted(() => {
 /**
  * Generic role navigation (easy to extend later)
  */
-function goRole(roleKey, path) {
+function goRole(roleKey, routeTarget) {
   localStorage.setItem("medsystem_role", roleKey);
-  router.push(path);
+  router.push(routeTarget);
 }
 
 function goUltraAdmin() {
-  goRole("ultra_admin", "/dashboard/ultra-admin");
+  goRole("ultra_admin", { name: "ua-dashboard" });
+}
+
+function goPhysician(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("physician", { name: "physician-dashboard" });
 }
 
 function notReady(roleName) {
@@ -194,10 +197,11 @@ function notReady(roleName) {
 function logout() {
   localStorage.removeItem("medsystem_logged_in");
   localStorage.removeItem("medsystem_role");
-  router.push("/login");
+  localStorage.removeItem("medsystem_role_label");
+  router.replace("/login");
 }
-
 </script>
+
 
 <style scoped>
 .grid{

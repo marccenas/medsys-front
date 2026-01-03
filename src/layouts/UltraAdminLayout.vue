@@ -1,6 +1,5 @@
 <template>
   <div class="ua-shell" :class="{ 'nav-open': navOpen }">
-    <!-- ✅ overlay only used on mobile/tablet when nav is open -->
     <div class="ua-overlay" @click="navOpen = false"></div>
 
     <!-- Sidebar -->
@@ -209,7 +208,7 @@ const pageTitle = computed(() => {
 });
 
 function go(child) {
-  navOpen.value = false; // ✅ close on nav click (mobile)
+  navOpen.value = false;
   const to = `/dashboard/ultra-admin/${child}`;
   if (route.path === to) return;
   router.push(to).catch(() => {});
@@ -229,7 +228,6 @@ function logout() {
   router.push("/login");
 }
 
-/* ✅ safety: close overlay + notif when route changes */
 watch(
   () => route.fullPath,
   () => {
@@ -240,7 +238,6 @@ watch(
 </script>
 
 <style scoped>
-/* ✅ keep your original desktop layout intact */
 .ua-shell{
   min-height: 100vh;
   display: grid;
