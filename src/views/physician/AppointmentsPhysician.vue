@@ -814,9 +814,9 @@ onBeforeUnmount(() => document.removeEventListener("click", onDocClick));
     flex: 1;
     justify-content: center;
   }
-  .btn-export-txt{ display:none; } /* icon-only on small phones */
+  .btn-export-txt{ display:none; }
 
-  .ap-filters{ grid-template-columns: 1fr; } /* ✅ stack filters */
+  .ap-filters{ grid-template-columns: 1fr; }
 
   .ap-foot{
     flex-direction: column;

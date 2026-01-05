@@ -91,12 +91,16 @@
 
       <RouterView />
     </main>
+
+    <!-- ✅ FLOATING CHATBOT (Physician root only) -->
+    <FloatingChatbot />
   </div>
 </template>
 
 <script setup>
 import { RouterView, useRoute, useRouter } from "vue-router";
 import { ref, onMounted, onBeforeUnmount } from "vue";
+import FloatingChatbot from "@/components/FloatingChatbot.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -352,9 +356,8 @@ onBeforeUnmount(() => {
    Responsive: Mobile + Off-canvas nav
 ========================= */
 @media (max-width: 860px){
-  /* ✅ SHOW hamburger properly */
   .hamburger{
-    display:flex; /* IMPORTANT: not inline-flex */
+    display:flex;
   }
 
   /* off-canvas sidenav */
