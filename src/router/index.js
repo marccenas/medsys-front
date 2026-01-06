@@ -15,6 +15,10 @@ import SettingsPage from "../views/ultra-admin/SettingsPage.vue";
 
 import PhysicianLayout from "../layouts/PhysicianLayout.vue";
 import PhysicianDashboardView from "../views/physician/DashboardPhysician.vue";
+import InternsLayout from "../layouts/InternSidebar.vue";
+import DashboardIntern from "@/views/interns/DashboardIntern.vue";
+import InternsPatientPage from "@/views/interns/PatientsIntern.vue"
+import TaskIntern from "@/views/interns/TasksIntern.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -56,6 +60,17 @@ const router = createRouter({
         { path: "settings", name: "physician-settings", component: () => import("../views/physician/SettingsPhysician.vue") },
       ],
     },
+    {
+    path: "/dashboard/intern",
+    component: InternsLayout,
+    children: [
+      { path: "dashboard", name: "intern-dashboard", component: DashboardIntern },
+      { path: "patients", name: "patients-page", component: InternsPatientPage },
+      { path: "tasks", name: "tasks-page", component: TaskIntern },
+      { path: "schedule", name: "intern-schedule", component: () => import("@/views/interns/ScheduleIntern.vue") },
+      { path: "learning", name: "intern-learning", component: () => import("@/views/interns/LearningIntern.vue") }
+    ],
+  },
 
     // optional: catch-all -> login (or a NotFound page)
     { path: "/:pathMatch(.*)*", redirect: "/login" },

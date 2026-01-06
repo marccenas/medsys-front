@@ -44,7 +44,7 @@
                 <template #sub>Medical leadership</template>
               </UiCard>
 
-              <UiCard @click="notReady('Interns')">
+              <UiCard @click="goInterns('Interns')">
                 <template #icon><font-awesome-icon icon="user-graduate" /></template>
                 <template #title>Interns</template>
                 <template #sub>Clinical training</template>
@@ -188,6 +188,11 @@ function goUltraAdmin() {
 function goPhysician(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("physician", { name: "physician-dashboard" });
+}
+
+function goInterns(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("interns", { name: "intern-dashboard" });
 }
 
 function notReady(roleName) {
