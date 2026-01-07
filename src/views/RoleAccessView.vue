@@ -50,7 +50,7 @@
                 <template #sub>Clinical training</template>
               </UiCard>
 
-              <UiCard @click="notReady('Nurses')">
+              <UiCard @click="goNurse('Nurses')">
                 <template #icon><font-awesome-icon icon="user-nurse" /></template>
                 <template #title>Nurses</template>
                 <template #sub>Ward operations</template>
@@ -193,6 +193,10 @@ function goPhysician(roleLabel) {
 function goInterns(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("interns", { name: "intern-dashboard" });
+}
+function goNurse(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("nurse", { name: "nurse-dashboard" });
 }
 
 function notReady(roleName) {

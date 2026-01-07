@@ -20,6 +20,8 @@ import DashboardIntern from "@/views/interns/DashboardIntern.vue";
 import InternsPatientPage from "@/views/interns/PatientsIntern.vue"
 import TaskIntern from "@/views/interns/TasksIntern.vue"
 
+import NurseLayout from "../layouts/NurseLayout.vue";
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -71,6 +73,19 @@ const router = createRouter({
       { path: "learning", name: "intern-learning", component: () => import("@/views/interns/LearningIntern.vue") }
     ],
   },
+{
+  path: "/dashboard/nurse",
+  component: NurseLayout,
+  children: [
+    { path: "", redirect: "dashboard" },
+    { path: "dashboard", name: "nurse-dashboard", component: () => import("@/views/nurse/NurseDashboard.vue") },
+    { path: "patients", name: "nurse-patients", component: () => import("@/views/nurse/NursePatients.vue") },
+    { path: "tasks", name: "nurse-tasks", component: () => import("@/views/nurse/NurseTasks.vue") },
+    { path: "schedule", name: "nurse-schedule", component: () => import("@/views/nurse/NurseSchedule.vue") },
+    { path: "learning", name: "nurse-learning", component: () => import("@/views/nurse/NurseLearning.vue") },
+  ],
+},
+
 
     // optional: catch-all -> login (or a NotFound page)
     { path: "/:pathMatch(.*)*", redirect: "/login" },
