@@ -64,7 +64,7 @@
             <h3 class="group-title">Nursing Team</h3>
             <div class="group-grid">
 
-              <UiCard @click="notReady('Nurse Unit Manager / Head Nurse')">
+              <UiCard @click="goHeadNurse('Nurse Unit Manager / Head Nurse')">
                 <template #icon><font-awesome-icon icon="user-shield" /></template>
                 <template #title>Nurse Unit Manager / Head Nurse</template>
                 <template #sub>Unit leadership</template>
@@ -84,7 +84,7 @@
 
               <UiCard @click="notReady('Interns (Nursing)')">
                 <template #icon><font-awesome-icon icon="graduation-cap" /></template>
-                <template #title>Interns</template>
+                <template #title>Nursing Interns</template>
                 <template #sub>Nursing trainees</template>
               </UiCard>
 
@@ -197,6 +197,10 @@ function goInterns(roleLabel) {
 function goNurse(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("nurse", { name: "nurse-dashboard" });
+}
+function goHeadNurse(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("head_nurse", { name: "headnurse-dashboard" });
 }
 
 function notReady(roleName) {

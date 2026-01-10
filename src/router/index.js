@@ -21,6 +21,7 @@ import InternsPatientPage from "@/views/interns/PatientsIntern.vue"
 import TaskIntern from "@/views/interns/TasksIntern.vue"
 
 import NurseLayout from "../layouts/NurseLayout.vue";
+import HeadNurseLayout from "../layouts/HeadNurseSideNav.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -83,6 +84,19 @@ const router = createRouter({
     { path: "tasks", name: "nurse-tasks", component: () => import("@/views/nurse/NurseTasks.vue") },
     { path: "schedule", name: "nurse-schedule", component: () => import("@/views/nurse/NurseSchedule.vue") },
     { path: "learning", name: "nurse-learning", component: () => import("@/views/nurse/NurseLearning.vue") },
+  ],
+},
+
+{
+  path: "/dashboard/head-nurse",
+  component: HeadNurseLayout,
+  children: [
+    { path: "", redirect: "dashboard" },
+    { path: "dashboard", name: "headnurse-dashboard", component: () => import("@/views/head-nurse/HeadNurseDashboard.vue") },
+    { path: "patients", name: "headnurse-patients", component: () => import("@/views/head-nurse/HeadNursePatients.vue") },
+    { path: "staff", name: "headnurse-staff", component: () => import("@/views/head-nurse/HeadNurseStaff.vue") },
+    { path: "reports", name: "headnurse-reports", component: () => import("@/views/head-nurse/HeadNurseReports.vue") },
+    { path: "supplies", name: "headnurse-supplies", component: () => import("@/views/head-nurse/HeadNurseSupplies.vue") },
   ],
 },
 
