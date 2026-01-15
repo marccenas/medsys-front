@@ -110,6 +110,7 @@ const router = createRouter({
     { path: "supplies", name: "np-pa-reports", component: () => import("@/views/np-pa/Supplies.vue") },
   ]
 },
+
 {
   path: "/dashboard/resident",
   component: () => import("@/layouts/ResidentsLayout.vue"),
@@ -119,6 +120,28 @@ const router = createRouter({
     { path: "staff", name: "resident-staff", component: () => import("@/views/resident/Staff.vue") },
     { path: "residents", name: "resident-residents", component: () => import("@/views/resident/Residents.vue") },
     { path: "supplies", name: "resident-supplies", component: () => import("@/views/resident/Supplies.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/nursing-interns",
+  component: () => import("@/layouts/NursingInternsLayout.vue"),
+  children: [
+    { path: "dashboard", name: "nurse-interns-dasboard", component: () => import("@/views/nursing-interns/NursingInternsDashboard.vue") },
+    { path: "patients", name: "nurse-interns-patients", component: () => import("@/views/nursing-interns/Patients.vue") },
+    { path: "reports", name: "nurse-interns-residents", component: () => import("@/views/nursing-interns/Reports.vue") },
+    { path: "settings", name: "nurse-interns-supplies", component: () => import("@/views/nursing-interns/Settings.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/pharmacy",
+  component: () => import("@/layouts/PharmacyLayout.vue"),
+  children: [
+    { path: "dashboard", name: "pharmacy-dasboard", component: () => import("@/views/pharmacy/PharmacyDashboard.vue") },
+    { path: "patients", name: "pharmacy-patients", component: () => import("@/views/pharmacy/Patients.vue") },
+    { path: "staff", name: "pharmacy-staff", component: () => import("@/views/pharmacy/Staff.vue") },
+    { path: "residents", name: "pharmacy-residents", component: () => import("@/views/pharmacy/Residents.vue") },
   ]
 },
 

@@ -82,7 +82,7 @@
                 <template #sub>Medical trainees</template>
               </UiCard>
 
-              <UiCard @click="notReady('Interns (Nursing)')">
+              <UiCard @click="goNursingInterns('Interns (Nursing)')">
                 <template #icon><font-awesome-icon icon="graduation-cap" /></template>
                 <template #title>Nursing Interns</template>
                 <template #sub>Nursing trainees</template>
@@ -96,7 +96,7 @@
             <h3 class="group-title">Allied Health Professionals</h3>
             <div class="group-grid">
 
-              <UiCard @click="notReady('Pharmacists & Pharmacy Technicians')">
+              <UiCard @click="goPharmacy('Pharmacists & Pharmacy Technicians')">
                 <template #icon><font-awesome-icon icon="pills" /></template>
                 <template #title>Pharmacists & Pharmacy Technicians</template>
                 <template #sub>Medication services</template>
@@ -209,6 +209,14 @@ function goNpPa(roleLabel) {
 function goResident(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("resident", { name: "resident-dasboard" });
+}
+function goNursingInterns(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("nursing-interns", { name: "nurse-interns-dasboard" });
+}
+function goPharmacy(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("pharmacy", { name: "pharmacy-dasboard" });
 }
 
 function notReady(roleName) {
