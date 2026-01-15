@@ -76,7 +76,7 @@
                 <template #sub>Advanced practice</template>
               </UiCard>
 
-              <UiCard @click="notReady('Residents')">
+              <UiCard @click="goResident('Residents')">
                 <template #icon><font-awesome-icon icon="users" /></template>
                 <template #title>Residents</template>
                 <template #sub>Medical trainees</template>
@@ -205,6 +205,10 @@ function goHeadNurse(roleLabel) {
 function goNpPa(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("head_nurse", { name: "np-pa-dasboard" });
+}
+function goResident(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("resident", { name: "resident-dasboard" });
 }
 
 function notReady(roleName) {

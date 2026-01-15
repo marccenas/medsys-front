@@ -110,6 +110,17 @@ const router = createRouter({
     { path: "supplies", name: "np-pa-reports", component: () => import("@/views/np-pa/Supplies.vue") },
   ]
 },
+{
+  path: "/dashboard/resident",
+  component: () => import("@/layouts/ResidentsLayout.vue"),
+  children: [
+    { path: "dashboard", name: "resident-dasboard", component: () => import("@/views/resident/ResidentDashboard.vue") },
+    { path: "patients", name: "resident-patients", component: () => import("@/views/resident/Patients.vue") },
+    { path: "staff", name: "resident-staff", component: () => import("@/views/resident/Staff.vue") },
+    { path: "residents", name: "resident-residents", component: () => import("@/views/resident/Residents.vue") },
+    { path: "supplies", name: "resident-supplies", component: () => import("@/views/resident/Supplies.vue") },
+  ]
+},
 
 
 
