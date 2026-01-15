@@ -70,7 +70,7 @@
                 <template #sub>Unit leadership</template>
               </UiCard>
 
-              <UiCard @click="notReady('Nurse Practitioners & Physician Assistants')">
+              <UiCard @click="goNpPa('Nurse Practitioners & Physician Assistants')">
                 <template #icon><font-awesome-icon icon="stethoscope" /></template>
                 <template #title>Nurse Practitioners & Physician Assistants</template>
                 <template #sub>Advanced practice</template>
@@ -201,6 +201,10 @@ function goNurse(roleLabel) {
 function goHeadNurse(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("head_nurse", { name: "headnurse-dashboard" });
+}
+function goNpPa(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("head_nurse", { name: "np-pa-dasboard" });
 }
 
 function notReady(roleName) {

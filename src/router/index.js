@@ -100,6 +100,18 @@ const router = createRouter({
   ],
 },
 
+{
+  path: "/dashboard/np-pa",
+  component: () => import("@/layouts/NpPaLayout.vue"),
+  children: [
+    { path: "dashboard", name: "np-pa-dasboard", component: () => import("@/views/np-pa/NpsPasDashboard.vue") },
+    { path: "patients", name: "np-pa-patients", component: () => import("@/views/np-pa/Patients.vue") },
+    { path: "staff", name: "np-pa-staff", component: () => import("@/views/np-pa/Staff.vue") },
+    { path: "supplies", name: "np-pa-reports", component: () => import("@/views/np-pa/Supplies.vue") },
+  ]
+},
+
+
 
     // optional: catch-all -> login (or a NotFound page)
     { path: "/:pathMatch(.*)*", redirect: "/login" },
