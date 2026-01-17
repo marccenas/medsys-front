@@ -145,6 +145,88 @@ const router = createRouter({
   ]
 },
 
+{
+  path: "/dashboard/p&otherapist",
+  component: () => import("@/layouts/Physical&OccupationalTherapistLayout.vue"),
+  children: [
+    { path: "dashboard", name: "p&otherapist-dasboard", component: () => import("@/views/p&otherapist/P&OTherapistDashboard.vue") },
+    { path: "patients", name: "p&otherapist-patients", component: () => import("@/views/p&otherapist/Patients.vue") },
+    { path: "staff", name: "p&otherapist-staff", component: () => import("@/views/p&otherapist/Staff.vue") },
+    { path: "residents", name: "p&otherapist-residents", component: () => import("@/views/p&otherapist/Residents.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/speechpathology",
+  component: () => import("@/layouts/SpeechPathologyLayout.vue"),
+  children: [
+    { path: "dashboard", name: "speechpathology-dasboard", component: () => import("@/views/speech-pathology/SpeechPathologyDashboard.vue") },
+    { path: "patients", name: "speechpathology-patients", component: () => import("@/views/speech-pathology/Patients.vue") },
+    { path: "staff", name: "speechpathology-staff", component: () => import("@/views/speech-pathology/Staff.vue") },
+    { path: "residents", name: "speechpathology-residents", component: () => import("@/views/speech-pathology/Residents.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/radiology",
+  component: () => import("@/layouts/RadiologyLayout.vue"),
+  children: [
+    { path: "dashboard", name: "radiology-dasboard", component: () => import("@/views/radiology/RadiologyDashboard.vue") },
+    { path: "patients", name: "radiology-patients", component: () => import("@/views/radiology/Patients.vue") },
+    { path: "staff", name: "radiology-staff", component: () => import("@/views/radiology/Staff.vue") },
+    { path: "residents", name: "radiology-residents", component: () => import("@/views/radiology/Residents.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/hospitaladmin",
+  component: () => import("@/layouts/HospitalAdminLayout.vue"),
+  children: [
+    { path: "dashboard", name: "hospitaladmin-dasboard", component: () => import("@/views/hospitaladmin/HospitalAdminDashboard.vue") },
+    { path: "patients", name: "hospitaladmin-patients", component: () => import("@/views/hospitaladmin/Patients.vue") },
+    { path: "staff", name: "hospitaladmin-staff", component: () => import("@/views/hospitaladmin/Staff.vue") },
+    { path: "residents", name: "hospitaladmin-residents", component: () => import("@/views/hospitaladmin/Residents.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/human-resource",
+  component: () => import("@/layouts/HumanResourceLayout.vue"),
+  children: [
+    { path: "dashboard", name: "humanresource-dasboard", component: () => import("@/views/human-resource/HumanResourceDashboard.vue") },
+    { path: "patients", name: "humanresource-patients", component: () => import("@/views/human-resource/Patients.vue") },
+    { path: "staff", name: "humanresource-staff", component: () => import("@/views/human-resource/Staff.vue") },
+    { path: "residents", name: "humanresource-residents", component: () => import("@/views/human-resource/Residents.vue") },
+    { path: "administration", name: "humanresource-administration", component: () => import("@/views/human-resource/Administration.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/finance&billing",
+  component: () => import("@/layouts/Finance&BillingLayout.vue"),
+  children: [
+    { path: "dashboard", name: "finance&billing-dasboard", component: () => import("@/views/finance&billing/Finance&BillingDashboard.vue") },
+    { path: "patients", name: "finance&billing-patients", component: () => import("@/views/finance&billing/Patients.vue") },
+    { path: "reports", name: "finance&billing-reports", component: () => import("@/views/finance&billing/Reports.vue") },
+    { path: "settings", name: "finance&billing-settings", component: () => import("@/views/finance&billing/Settings.vue") },
+  ]
+},
+
+{
+  path: "/dashboard/security-personnel",
+  component: () => import("@/layouts/SecurityPersonnelLayout.vue"),
+  children: [
+    { path: "dashboard", name: "security-personnel-dasboard", component: () => import("@/views/security-personnel/SecurityDashboard.vue") },
+    { path: "incidents", name: "security-personnel-incidents", component: () => import("@/views/security-personnel/Incidents.vue") },
+    { path: "alerts&monitoring", name: "security-personnel-alert&monitoring", component: () => import("@/views/security-personnel/Alerts&Monitoring.vue") },
+    { path: "accesscontrol", name: "security-personnel-accesscontrol", component: () => import("@/views/security-personnel/AccessControl.vue") },
+    { path: "cctv&surveillance", name: "security-personnel-cctv&surveillance", component: () => import("@/views/security-personnel/CCTV&Surveillance.vue") },
+    { path: "patrolmanagement", name: "security-personnel-patrolmanagement", component: () => import("@/views/security-personnel/PatrolManagement.vue") },
+    { path: "securitystaff", name: "security-personnel-securitystaff", component: () => import("@/views/security-personnel/SecurityStaff.vue") },
+    { path: "securityreports", name: "security-personnel-securityreports", component: () => import("@/views/security-personnel/SecurityReports.vue") },
+    { path: "settings", name: "security-personnel-settings", component: () => import("@/views/security-personnel/Settings.vue") },
+  ]
+},
 
 
     // optional: catch-all -> login (or a NotFound page)

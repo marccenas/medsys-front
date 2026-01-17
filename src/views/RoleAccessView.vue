@@ -102,19 +102,19 @@
                 <template #sub>Medication services</template>
               </UiCard>
 
-              <UiCard @click="notReady('Physical & Occupational Therapists')">
+              <UiCard @click="goPOTherapist('Physical & Occupational Therapists')">
                 <template #icon><font-awesome-icon icon="person-walking" /></template>
                 <template #title>Physical & Occupational Therapists</template>
                 <template #sub>Rehab care</template>
               </UiCard>
 
-              <UiCard @click="notReady('Speech-Language Pathologists')">
+              <UiCard @click="goSpeechPathology('Speech-Language Pathologists')">
                 <template #icon><font-awesome-icon icon="comment-medical" /></template>
                 <template #title>Speech-Language Pathologists</template>
                 <template #sub>Speech therapy</template>
               </UiCard>
 
-              <UiCard @click="notReady('Radiologic Technologists')">
+              <UiCard @click="goRadiology('Radiologic Technologists')">
                 <template #icon><font-awesome-icon icon="x-ray" /></template>
                 <template #title>Radiologic Technologists</template>
                 <template #sub>Imaging</template>
@@ -128,25 +128,25 @@
             <h3 class="group-title">Administration</h3>
             <div class="group-grid">
 
-              <UiCard @click="notReady('Hospital Administration / Executives')">
+              <UiCard @click="goHospitalAdmin('Hospital Administration / Executives')">
                 <template #icon><font-awesome-icon icon="building" /></template>
                 <template #title>Hospital Administration / Executives</template>
                 <template #sub>Executive ops</template>
               </UiCard>
 
-              <UiCard @click="notReady('Human Resources Staff')">
+              <UiCard @click="goHumanResource('Human Resources Staff')">
                 <template #icon><font-awesome-icon icon="users-gear" /></template>
                 <template #title>Human Resources Staff</template>
                 <template #sub>HR management</template>
               </UiCard>
 
-              <UiCard @click="notReady('Finance & Billing Staff')">
+              <UiCard @click="goFinanceBilling('Finance & Billing Staff')">
                 <template #icon><font-awesome-icon icon="money-bill-wave" /></template>
                 <template #title>Finance & Billing Staff</template>
                 <template #sub>Billing & claims</template>
               </UiCard>
 
-              <UiCard @click="notReady('Security Personnel')">
+              <UiCard @click="goSecurityPersonnel('Security Personnel')">
                 <template #icon><font-awesome-icon icon="shield" /></template>
                 <template #title>Security Personnel</template>
                 <template #sub>Safety & access</template>
@@ -217,6 +217,34 @@ function goNursingInterns(roleLabel) {
 function goPharmacy(roleLabel) {
   localStorage.setItem("medsystem_role_label", roleLabel);
   goRole("pharmacy", { name: "pharmacy-dasboard" });
+}
+function goPOTherapist(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("potherapist", { name: "p&otherapist-dasboard" });
+}
+function goSpeechPathology(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("speechpathology", { name: "speechpathology-dasboard" });
+}
+function goRadiology(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("radiology", { name: "radiology-dasboard" });
+}
+function goHospitalAdmin(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("hospitaladmin", { name: "hospitaladmin-dasboard" });
+}
+function goHumanResource(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("humanresource", { name: "humanresource-dasboard" });
+}
+function goFinanceBilling(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("finance&billing", { name: "finance&billing-dasboard" });
+}
+function goSecurityPersonnel(roleLabel) {
+  localStorage.setItem("medsystem_role_label", roleLabel);
+  goRole("securitypersonnel", { name: "security-personnel-dasboard" });
 }
 
 function notReady(roleName) {
