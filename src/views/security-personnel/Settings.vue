@@ -1,5 +1,5 @@
 <template>
-<h1>Welcome to Access Control</h1>
+<h1>Welcome to Settings.</h1>
 </template>
 
 <script setup>

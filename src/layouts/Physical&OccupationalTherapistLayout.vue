@@ -98,7 +98,7 @@
             <img class="ua-avatar" :src="avatarUrl" alt="avatar" />
             <div class="ua-user">
               <div class="ua-user-name">John Evans</div>
-              <div class="ua-user-role">System Administrator</div>
+              <div class="ua-user-role">Physical Therapist</div>
             </div>
 
             <button class="ua-icon-btn" type="button" @click="logout" aria-label="Logout">

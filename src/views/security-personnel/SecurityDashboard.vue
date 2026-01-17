@@ -10,50 +10,62 @@
           <span>Manage the security operations of the healthcare system.</span>
         </div>
       </div>
-    </div>
+    </div>Recent Security Logs
+
 
     <!-- KPI Row -->
-    <section class="sec-kpis">
-      <div class="sec-kpi blue">
-        <div class="sec-kpi-left">
-          <div class="sec-kpi-label">Total Incidents</div>
-          <div class="sec-kpi-ico">🛡️</div>
+      <section class="sec-kpis">
+        <div class="sec-kpi blue">
+          <div class="sec-kpi-left">
+            <div class="sec-kpi-label">Total Incidents</div>
+            <div class="sec-kpi-ico">
+              <font-awesome-icon icon="shield-halved" />
+            </div>
+          </div>
+          <div class="sec-kpi-value">{{ kpiTotal }}</div>
         </div>
-        <div class="sec-kpi-value">{{ kpiTotal }}</div>
-      </div>
 
-      <div class="sec-kpi teal">
-        <div class="sec-kpi-left">
-          <div class="sec-kpi-label">Open Incidents</div>
-          <div class="sec-kpi-ico">📄</div>
+        <div class="sec-kpi teal">
+          <div class="sec-kpi-left">
+            <div class="sec-kpi-label">Open Incidents</div>
+            <div class="sec-kpi-ico">
+              <font-awesome-icon icon="clipboard-list" />
+            </div>
+          </div>
+          <div class="sec-kpi-value">{{ kpiOpen }}</div>
         </div>
-        <div class="sec-kpi-value">{{ kpiOpen }}</div>
-      </div>
 
-      <div class="sec-kpi orange">
-        <div class="sec-kpi-left">
-          <div class="sec-kpi-label">Critical Alerts</div>
-          <div class="sec-kpi-ico">⚠️</div>
+        <div class="sec-kpi orange">
+          <div class="sec-kpi-left">
+            <div class="sec-kpi-label">Critical Alerts</div>
+            <div class="sec-kpi-ico">
+              <font-awesome-icon icon="triangle-exclamation" />
+            </div>
+          </div>
+          <div class="sec-kpi-value">{{ kpiCritical }}</div>
         </div>
-        <div class="sec-kpi-value">{{ kpiCritical }}</div>
-      </div>
 
-      <div class="sec-kpi coral">
-        <div class="sec-kpi-left">
-          <div class="sec-kpi-label">Security Staff</div>
-          <div class="sec-kpi-ico">🧑‍✈️</div>
+        <div class="sec-kpi coral">
+          <div class="sec-kpi-left">
+            <div class="sec-kpi-label">Security Staff</div>
+            <div class="sec-kpi-ico">
+              <font-awesome-icon icon="user-shield" />
+            </div>
+          </div>
+          <div class="sec-kpi-value">{{ kpiStaff }}</div>
         </div>
-        <div class="sec-kpi-value">{{ kpiStaff }}</div>
-      </div>
 
-      <div class="sec-kpi purple">
-        <div class="sec-kpi-left">
-          <div class="sec-kpi-label">On Duty</div>
-          <div class="sec-kpi-ico">🕘</div>
+        <div class="sec-kpi purple">
+          <div class="sec-kpi-left">
+            <div class="sec-kpi-label">On Duty</div>
+            <div class="sec-kpi-ico">
+              <font-awesome-icon icon="clock" />
+            </div>
+          </div>
+          <div class="sec-kpi-value">{{ kpiOnDuty }}</div>
         </div>
-        <div class="sec-kpi-value">{{ kpiOnDuty }}</div>
-      </div>
-    </section>
+      </section>
+
 
     <!-- Top panels -->
     <section class="sec-grid">
@@ -192,7 +204,7 @@
                 </td>
                 <td class="sec-loc">{{ r.location }}</td>
                 <td>
-                  <span class="sec-pill" :class="pillClass(r.status)">{{ r.status }}</span>
+                  <span class="sec-pill" style=" font-weight: 300 !important;" :class="pillClass(r.status)">{{ r.status }}</span>
                 </td>
                 <td class="sec-dotcell">
                   <span class="sec-rightdot" :class="rightDotClass(r.status)"></span>
@@ -382,6 +394,11 @@ function uiOnly(name) {
 </script>
 
 <style scoped>
+td {
+  font-weight: 500 !important;
+  font-size: medium !important;
+}
+
 .sec{ display:grid; gap:16px; min-width:0; }
 
 /* header */
@@ -412,10 +429,7 @@ function uiOnly(name) {
 .sec-kpi-ico{
   margin-top:8px;
   width:34px; height:34px;
-  border-radius:10px;
   display:grid; place-items:center;
-  background:rgba(255,255,255,0.18);
-  border:1px solid rgba(255,255,255,0.22);
 }
 .sec-kpi-value{ font-size:40px; font-weight:900; line-height:1; }
 .sec-kpi.blue{ background:linear-gradient(90deg,#2e6be6,#5b8df6); }

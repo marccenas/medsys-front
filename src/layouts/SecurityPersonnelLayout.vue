@@ -16,44 +16,64 @@
         </button>
 
         <button class="ua-link" :class="{ active: isActive('incidents') }" @click="go('incidents')">
-          <font-awesome-icon icon="hospital-user" />
+          <font-awesome-icon icon="triangle-exclamation" />
           <span>Incidents</span>
         </button>
 
-        <button class="ua-link" :class="{ active: isActive('alerts&monitoring') }" @click="go('alerts&monitoring')">
-          <font-awesome-icon icon="users" />
+        <button
+          class="ua-link"
+          :class="{ active: isActive('alerts&monitoring') }"
+          @click="go('alerts&monitoring')"
+        >
+          <font-awesome-icon icon="bell" />
           <span>Alerts & Monitoring</span>
         </button>
 
         <button class="ua-link" :class="{ active: isActive('accesscontrol') }" @click="go('accesscontrol')">
-          <font-awesome-icon icon="user-graduate" />
+          <font-awesome-icon icon="key" />
           <span>Access Control</span>
         </button>
 
-        <button class="ua-link" :class="{ active: isActive('cctv&monitoring') }" @click="go('cctv&monitoring')">
-          <font-awesome-icon icon="user-graduate" />
+        <button
+          class="ua-link"
+          :class="{ active: isActive('cctv&surveillance') }"
+          @click="go('cctv&surveillance')"
+        >
+          <font-awesome-icon icon="video" />
           <span>CCTV & Surveillance</span>
         </button>
 
-        <button class="ua-link" :class="{ active: isActive('patrolmanagement') }" @click="go('patrolmanagement')">
-          <font-awesome-icon icon="user-graduate" />
+        <button
+          class="ua-link"
+          :class="{ active: isActive('patrolmanagement') }"
+          @click="go('patrolmanagement')"
+        >
+          <font-awesome-icon icon="route" />
           <span>Patrol Management</span>
         </button>
 
-        <button class="ua-link" :class="{ active: isActive('securitystaff') }" @click="go('securitystaff')">
-          <font-awesome-icon icon="user-graduate" />
+        <button
+          class="ua-link"
+          :class="{ active: isActive('securitystaff') }"
+          @click="go('securitystaff')"
+        >
+          <font-awesome-icon icon="user-shield" />
           <span>Security Staff</span>
         </button>
 
-        <button class="ua-link" :class="{ active: isActive('securityreports') }" @click="go('securityreports')">
-          <font-awesome-icon icon="user-graduate" />
+        <button
+          class="ua-link"
+          :class="{ active: isActive('securityreports') }"
+          @click="go('securityreports')"
+        >
+          <font-awesome-icon icon="file-shield" />
           <span>Security Reports</span>
         </button>
 
         <button class="ua-link" :class="{ active: isActive('settings') }" @click="go('settings')">
-          <font-awesome-icon icon="user-graduate" />
+          <font-awesome-icon icon="gear" />
           <span>Settings</span>
-        </button>                        
+        </button>
       </nav>
 
     </aside>
@@ -123,7 +143,7 @@
             <img class="ua-avatar" :src="avatarUrl" alt="avatar" />
             <div class="ua-user">
               <div class="ua-user-name">John Evans</div>
-              <div class="ua-user-role">System Administrator</div>
+              <div class="ua-user-role">Security Staff Personnel</div>
             </div>
 
             <button class="ua-icon-btn" type="button" @click="logout" aria-label="Logout">
